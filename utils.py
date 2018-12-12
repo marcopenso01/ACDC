@@ -50,4 +50,4 @@ def get_latest_model_checkpoint_path(folder, name):
 
     latest_iteration = np.max(iteration_nums)
 
-return os.path.join(folder, name + '-' + str(latest_iteration))
+    return os.path.join(folder, name + '-' + str(latest_iteration))
