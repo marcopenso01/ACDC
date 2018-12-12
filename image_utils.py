@@ -84,4 +84,4 @@ def keep_largest_connected_components(mask):
 
         out_img[blobs == largest_blob_label] = struc_id
 
-     return out_img
+    return out_img
