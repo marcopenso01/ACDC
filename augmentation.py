@@ -11,21 +11,20 @@ import configuration as config
 
 def augmentation_function(images, labels):
     '''
-    Function for augmentation of minibatches. It will transform a set of images and corresponding labels
-    by a number of optional transformations. Each image/mask pair in the minibatch will be seperately transformed
-    with random parameters. 
     :param images: A numpy array of shape [minibatch, X, Y, (Z), nchannels]
     :param labels: A numpy array containing a corresponding label mask
     :param do_rotations: Rotate the input images by a random angle between -15 and 15 degrees.
     :param do_scaleaug: Do scale augmentation by sampling one length of a square, then cropping and upsampling the image
                         back to the original size. 
-    :param do_fliplr: Perform random flips with a 50% chance in the left right direction. 
-    :return: A mini batch of the same size but with transformed images and masks. 
+    :param do_fliplr: Perform random flips with a 50% chance in the left right direction.     
     '''
-
+    
     do_rotations = config.do_rotations
+    do_rotations_90 = config.do_rotations_90
+    do_rotation_180 = config.do_rotations_180
     do_scaleaug = config.do_rotations
     do_fliplr = config.do_fliplr
+    do_flipud = config.do_flipud
 
     new_images = []
     new_labels = []
