@@ -20,6 +20,9 @@ loss_type = 'weighted_crossentropy'  # crossentropy/weighted_crossentropy/dice/d
 # Augmentation settings
 augment_batch = False
 do_rotations = True
+angles = (-15,15)    #define range (min,max)
+do_rotations_90 = False
+do_rotation_180 = False
 do_scaleaug = False
 do_fliplr = False
 
