@@ -1,18 +1,11 @@
-!pip install -r requirements.txt
 import os
 from glob import glob
 import time
 import re
 import argparse
-!pip install nibabel 
 import pandas as pd
-!pip install medpy
 import h5py
 import tensorflow as tf
-
-!pip install matplotlib scipy
-!pip install cython
-!pip install -t /usr/local/lib/python3.6/dist-packages scikit-image
 
 import SimpleITK as sitk
 from multiprocessing import pool
