@@ -4,6 +4,7 @@ import time
 import shutil
 import tensorflow as tf
 import numpy as np
+import h5py
 
 import utils
 import image_utils
@@ -24,3 +25,4 @@ data = acdc_data.load_and_maybe_process_data(
 # the following are HDF5 datasets, not numpy arrays
 images_train = data['images_train']
 labels_train = data['masks_train']
+
