@@ -5,6 +5,7 @@ data_mode = '2D'  # 2D or 3D
 image_size = (212, 212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
+split_test_train = False
 
 # Training settings
 batch_size = 10
