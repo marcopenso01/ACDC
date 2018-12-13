@@ -4,6 +4,7 @@ import time
 import shutil
 import tensorflow as tf
 import numpy as np
+import cv2
 
 import utils
 import image_utils
