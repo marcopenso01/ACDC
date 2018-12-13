@@ -9,6 +9,7 @@ from skimage import transform
 
 import utils
 import image_utils
+import configuration as config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
@@ -52,7 +53,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
     '''
     Main function that prepares a dataset from the raw challenge data to an hdf5 dataset
     '''
-
+    split_test_train = config.split_test_train
+    
     assert (mode in ['2D', '3D']), 'Unknown mode: %s' % mode
     if mode == '2D' and not len(size) == 2:
         raise AssertionError('Inadequate number of size parameters')
@@ -341,7 +343,7 @@ def load_and_maybe_process_data(input_folder,
      
     :return: Returns an h5py.File handle to the dataset
     '''
-
+    split_test_train = config.split_test_train
     size_str = '_'.join([str(i) for i in size])
     res_str = '_'.join([str(i) for i in target_resolution])
 
