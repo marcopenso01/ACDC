@@ -62,9 +62,9 @@ def augmentation_function(images, labels):
         if do_scaleaug:
             offset = config.offset
             n_x, n_y = img.shape
-            r_y = np.random.random_integers(n_y-offset, n_y)
-            p_x = np.random.random_integers(0, n_x-r_y)
-            p_y = np.random.random_integers(0, n_y-r_y)
+            r_y = np.random.randint(n_y-offset, n_y)
+            p_x = np.random.randint(0, n_x-r_y)
+            p_y = np.random.randint(0, n_y-r_y)
 
             img = image_utils.resize_image(img[p_y:(p_y+r_y), p_x:(p_x+r_y)],(n_x, n_y))
             lbl = image_utils.resize_image(lbl[p_y:(p_y + r_y), p_x:(p_x + r_y)], (n_x, n_y), interp=cv2.INTER_NEAREST)
