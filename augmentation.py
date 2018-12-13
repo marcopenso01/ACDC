@@ -89,4 +89,4 @@ def augmentation_function(images, labels):
     sampled_image_batch = np.asarray(new_images)
     sampled_label_batch = np.asarray(new_labels)
 
-return sampled_image_batch, sampled_label_batch
+    return sampled_image_batch, sampled_label_batch
