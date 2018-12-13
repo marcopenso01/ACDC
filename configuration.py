@@ -24,6 +24,7 @@ angles = (-15,15)     #define range (min,max)
 do_rotations_90 = False    #rotation 90°
 do_rotation_180 = False    #rotation 180°
 do_scaleaug = False        #crop scale
+offset = 30
 do_fliplr = False          #Flip array in the left/right direction
 do_flipud = False          #Flip array in the up/down direction.
 
