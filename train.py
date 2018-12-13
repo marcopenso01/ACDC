@@ -6,11 +6,13 @@ import argparse
 import pandas as pd
 import h5py
 import tensorflow as tf
+import shutil
 
 import SimpleITK as sitk
 from multiprocessing import pool
 import pickle
 import numpy as np
+import logging
 
 import utils
 import image_utils
