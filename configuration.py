@@ -19,14 +19,16 @@ loss_type = 'weighted_crossentropy'  # crossentropy/weighted_crossentropy/dice/d
 
 # Augmentation settings
 augment_batch = False
-do_rotations = True   #random rotation in range "angles"
-angles = (-15,15)     #define range (min,max)
+do_rotations = True   #random rotation in range "angles" (min,max)
+angles = (-15,15)     
 do_rotations_90 = False    #rotation 90°
 do_rotation_180 = False    #rotation 180°
 do_scaleaug = False        #crop scale
 offset = 30
 do_fliplr = False          #Flip array in the left/right direction
 do_flipud = False          #Flip array in the up/down direction.
+RandomBrightness = False
+
 
 # Paths settings (we need to mount our drive before)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
