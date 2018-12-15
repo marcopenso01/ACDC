@@ -36,6 +36,8 @@ min_factor = 1.0
 max_factor = 1.0
 blurr = False               #Blurring the image with gaussian filter with random 'sigma'
 sigma = (0.5,1.0)           #generate a random sigma in range(min,max)
+SaltAndPepper = False
+density = 0.05              #Noise density for salt and pepper noise, specified as a numeric scalar.
 
 prob = 0.5                  #Probability [0.0/1.0] (0 no augmentation, 1 always)
 
