@@ -1,4 +1,5 @@
 import logging
+import os
 import os.path
 import time
 import shutil
@@ -6,6 +7,12 @@ import tensorflow as tf
 import numpy as np
 import cv2
 import random
+from glob import glob
+from datetime import datetime
+from shutil import copyfile
+import imgaug as ia
+from imgaug import augmenters as iaa
+from scipy.misc import imsave, imread
 
 from PIL import Image, ImageOps, ImageEnhance
 import math
@@ -33,12 +40,15 @@ def augmentation_function(images, labels):
     do_rotation_270 = config.do_rotation_270
     do_rotation_reshape = config.do_rotation_reshape
     do_rotation = config.do_rotation
-    do_scaleaug = config.do_rotations
+    crop = config.crop
     do_fliplr = config.do_fliplr
     do_flipud = config.do_flipud
     RandomContrast = config.RandomContrast
     blurr = config.blurr
     SaltAndPepper = config.SaltAndPepper
+    Multiply = config.Multiply
+    ElasticTransformation = config.ElasticTransformation
+    Pad = config.Pad
     
     # Probability to perform a generic operation
     prob = config.prob
@@ -60,7 +70,7 @@ def augmentation_function(images, labels):
             if do_rotations_range:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    angles = config.range
+                    angles = config.rg
                     random_angle = np.random.uniform(angles[0], angles[1])
                     img = image_utils.rotate_image(img, random_angle)
                     lbl = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
@@ -106,16 +116,13 @@ def augmentation_function(images, labels):
                     lbl = scipy.ndimage.rotate(lbl,angle,reshape=False)
             
             # RANDOM CROP SCALE
-            if do_scaleaug:
+            if crop:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    offset = config.offset
-                    n_x, n_y = img.shape
-                    r_y = np.random.randint(n_y-offset, n_y)
-                    p_x = np.random.randint(0, n_x-r_y)
-                    p_y = np.random.randint(0, n_y-r_y)
-                    img = image_utils.resize_image(img[p_y:(p_y+r_y), p_x:(p_x+r_y)],(n_x, n_y))
-                    lbl = image_utils.resize_image(lbl[p_y:(p_y + r_y), p_x:(p_x + r_y)], (n_x, n_y), interp=cv2.INTER_NEAREST)
+                    augmenters = [iaa.Crop(px=config.offset)]
+                    seq = iaa.Sequential(augmenters, random_order=True)
+                    img = seq.augment_image(img)
+                    lbl = seq.augment_image(lbl)
 
             # RANDOM FLIP Lelf/Right
             if do_fliplr:
@@ -156,7 +163,7 @@ def augmentation_function(images, labels):
                     sigma = np.random.uniform(inter[0],inter[1])
                     img = scipy.ndimage.gaussian_filter(img, sigma)
            
-            # SaltAndPepper
+            # SaltAndPepper (image should be normalized between 0 and 1)
             if SaltAndPepper:
                 coin_flip = np.random.uniform(low=0, high=1.0)
                 if coin_flip < prob :
@@ -168,7 +175,39 @@ def augmentation_function(images, labels):
                     coords = [np.random.randint(0, d - 1, int(np.ceil(dens * img.size * 0.5))) for d in img.shape]
                     img[coords] = 0
             
-            # 
+            # Multiply
+            if Multiply:
+                coin_flip = np.random.uniform(low=0, high=1.0)
+                if coin_flip < prob :
+                    augmenters = [iaa.Multiply(config.m)]
+                    seq = iaa.Sequential(augmenters, random_order=True)
+                    img = seq.augment_image(img)
+            
+            # ElasticTransformation
+            '''
+            The augmenter has the parameters ``alpha`` and ``sigma``. ``alpha`` controls the strength of the
+            displacement: higher values mean that pixels are moved further. ``sigma`` controls the
+            smoothness of the displacement: higher values lead to smoother patterns -- as if the
+            image was below water -- while low values will cause indivdual pixels to be moved very
+            differently from their neighbours, leading to noisy and pixelated images.
+            A relation of 10:1 seems to be good for ``alpha`` and ``sigma`
+            '''
+            if ElasticTransformation:
+                coin_flip = np.random.uniform(low=0, high=1.0)
+                if coin_flip < prob :
+                    augmenters = [iaa.ElasticTransformation(alpha=config.alpha, sigma=config.sigma)]
+                    seq = iaa.Sequential(augmenters, random_order=True)
+                    img = seq.augment_image(img)
+                    lbl = seq.augment_image(lbl)
+            
+            if Pad:
+                coin_flip = np.random.uniform(low=0, high=1.0)
+                if coin_flip < prob :
+                    augmenters = [iaa.Pad(px=config.offset2)]
+                    seq = iaa.Sequential(augmenters, random_order=True)
+                    img = seq.augment_image(img)
+                    lbl = seq.augment_image(lbl)
+            
             
             new_images.append(img[...])
             new_labels.append(lbl[...])
