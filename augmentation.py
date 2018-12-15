@@ -24,7 +24,7 @@ def augmentation_function(images, labels):
     :param do_scaleaug: Do scale augmentation by sampling one length of a square, then cropping and upsampling the image
                         back to the original size. 
     :param do_fliplr: Perform random flips with a 50% chance in the left right direction.     
-    '''
+    ''' 
     
     # Define in configuration.py which operations to perform
     do_rotations_range = config.do_rotations_range
@@ -154,9 +154,11 @@ def augmentation_function(images, labels):
                     inter = config.sigma
                     sigma = np.random.uniform(inter[0],inter[1])
                     img = scipy.ndimage.gaussian_filter(img, sigma)
+           
 
-
-
+            # TRANSLATION
+            
+            
             new_images.append(img[...])
             new_labels.append(lbl[...])
 
@@ -164,5 +166,6 @@ def augmentation_function(images, labels):
         sampled_label_batch = np.asarray(new_labels)
 
         return sampled_image_batch, sampled_label_batch
+    
     else:
         logging.warning('Probability must be in range 0.0/1.0!!')
