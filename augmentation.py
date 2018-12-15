@@ -38,6 +38,7 @@ def augmentation_function(images, labels):
     do_flipud = config.do_flipud
     RandomContrast = config.RandomContrast
     blurr = config.blurr
+    SaltAndPepper = config.SaltAndPepper
     
     # Probability to perform a generic operation
     prob = config.prob
@@ -54,7 +55,7 @@ def augmentation_function(images, labels):
             lbl = np.squeeze(labels[i,...])
             
             # ROTATE (Min,Max)
-            # The operation will rotate an image by an random amount, within a range
+            # The operation will rotate an image by a random amount, within a range
             # specified
             if do_rotations_range:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
@@ -155,9 +156,19 @@ def augmentation_function(images, labels):
                     sigma = np.random.uniform(inter[0],inter[1])
                     img = scipy.ndimage.gaussian_filter(img, sigma)
            
-
-            # TRANSLATION
+            # SaltAndPepper
+            if SaltAndPepper:
+                coin_flip = np.random.uniform(low=0, high=1.0)
+                if coin_flip < prob :
+                    dens = config.density
+                    if (dens>1.00) | (dens<0.00):
+                        dens = 0.05
+                    coords = [np.random.randint(0, d - 1, int(np.ceil(dens * img.size * 0.5))) for d in img.shape]
+                    img[coords] = 1
+                    coords = [np.random.randint(0, d - 1, int(np.ceil(dens * img.size * 0.5))) for d in img.shape]
+                    img[coords] = 0
             
+            # 
             
             new_images.append(img[...])
             new_labels.append(lbl[...])
