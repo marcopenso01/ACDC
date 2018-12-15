@@ -34,8 +34,8 @@ do_flipud = False           #Flip array in the up/down direction.
 RandomContrast= False       #Random change contrast of an image
 min_factor = 1.0
 max_factor = 1.0
-blurr = False
-sigma = 0.5
+blurr = False               #Blurring the image with gaussian filter with random 'sigma'
+sigma = (0.5,1.0)           #generate a random sigma in range(min,max)
 
 prob = 0.5                  #Probability [0.0/1.0] (0 no augmentation, 1 always)
 
