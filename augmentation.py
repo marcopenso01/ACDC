@@ -30,9 +30,9 @@ def augmentation_function(images, labels):
     ''' 
     
     # Define in configuration.py which operations to perform
-    do_rotations_range = config.do_rotations_range
-    do_rotations_90 = config.do_rotations_90
-    do_rotation_180 = config.do_rotations_180
+    do_rotation_range = config.do_rotation_range
+    do_rotation_90 = config.do_rotation_90
+    do_rotation_180 = config.do_rotation_180
     do_rotation_270 = config.do_rotation_270
     do_rotation_reshape = config.do_rotation_reshape
     do_rotation = config.do_rotation
@@ -63,7 +63,7 @@ def augmentation_function(images, labels):
             # ROTATE (Min,Max)
             # The operation will rotate an image by a random amount, within a range
             # specified
-            if do_rotations_range:
+            if do_rotation_range:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
                     angles = config.rg
@@ -76,7 +76,7 @@ def augmentation_function(images, labels):
                     new_labels.append(lbll[...])
 
             # ROTATE 90°
-            if do_rotations_90:
+            if do_rotation_90:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
                     angle = 90
@@ -88,7 +88,7 @@ def augmentation_function(images, labels):
                     new_labels.append(lbll[...])
         
             # ROTATE 180°
-            if do_rotations_180:
+            if do_rotation_180:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
                     angle = 180
@@ -100,7 +100,7 @@ def augmentation_function(images, labels):
                     new_labels.append(lbll[...])
            
             # ROTATE 270°
-            if do_rotations_270:
+            if do_rotation_270:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
                     angle = 270
