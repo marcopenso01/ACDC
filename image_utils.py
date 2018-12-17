@@ -37,6 +37,13 @@ def normalise_image(image):
     s = np.std(img_o)
     return np.divide((img_o - m), s)
 
+def normalizer(image):
+    '''
+    make image normalize between 0 and 1
+    '''
+    image = (image-image.min())/(image.max()-image.min())
+    return image
+
 def normalise_images(X):
     '''
     Helper for making the images zero mean and unit standard deviation i.e. `white`
