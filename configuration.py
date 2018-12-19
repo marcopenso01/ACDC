@@ -1,4 +1,8 @@
+import model_zoo
 import tensorflow as tf
+
+# Model settings
+model_handle = model_zoo.unet2D_bn_modified
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
