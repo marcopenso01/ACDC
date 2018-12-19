@@ -19,7 +19,8 @@ schedule_lr = False
 warmup_training = True
 weight_decay = 0.00000
 momentum = None
-loss_type = 'weighted_crossentropy'  # crossentropy/weighted_crossentropy/dice/dice_onlyfg
+# loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice'
+loss_type = 'weighted_crossentropy'
 
 # Augmentation settings
 augment_batch = False
