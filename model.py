@@ -4,12 +4,12 @@ from tfwrapper import losses
 import tensorflow.examples.tutorials.mnist
 
 
-def inference(images, exp_config, training):
+def inference(images, config, training):
     '''
     Wrapper function to provide an interface to a model from the model_zoo inside of the model module. 
     '''
 
-    return exp_config.model_handle(images, training, nlabels=exp_config.nlabels)
+    return config.model_handle(images, training, nlabels=config.nlabels)
 
 
 def loss(logits, labels, nlabels, loss_type, weight_decay=0.0):
