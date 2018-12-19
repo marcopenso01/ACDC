@@ -16,6 +16,7 @@ import logging
 
 import utils
 import image_utils
+import model as model
 import acdc_data
 import configuration as config
 import augmentation as aug
