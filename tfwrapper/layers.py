@@ -187,24 +187,28 @@ def conv2D_layer(bottom,
 
     '''
     Standard 2D convolutional layer
+    bottom = input data
     '''
-
+    #number of input channels
     bottom_num_filters = bottom.get_shape().as_list()[-1]
-
+    
+    #define weights and bias structures
     weight_shape = [kernel_size[0], kernel_size[1], bottom_num_filters, num_filters]
     bias_shape = [num_filters]
 
     strides_augm = [1, strides[0], strides[1], 1]
 
     with tf.variable_scope(name):
-
+        #initialise weights
         weights = get_weight_variable(weight_shape, name='W', type=weight_init, regularize=True)
         op = tf.nn.conv2d(bottom, filter=weights, strides=strides_augm, padding=padding)
 
         biases = None
         if add_bias:
+            #initialise bias for the filter
             biases = get_bias_variable(bias_shape, name='b')
             op = tf.nn.bias_add(op, biases)
+        # apply a ReLU non-linear activation
         op = activation(op)
 
         # Add Tensorboard summaries
