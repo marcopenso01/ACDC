@@ -1,6 +1,8 @@
 import model_zoo
 import tensorflow as tf
 
+experiment_name = 'unet2D_bn_modified_wxent_bn'
+
 # Model settings
 model_handle = model_zoo.unet2D_bn_modified
 
@@ -58,3 +60,4 @@ prob = 1                  #Probability [0.0/1.0] (0 no augmentation, 1 always)
 # Paths settings (we need to mount our drive before)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
+log_root = '/content/drive/My Drive/logdir'
