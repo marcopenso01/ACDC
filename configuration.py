@@ -1,10 +1,12 @@
-import model_zoo
+import model_structure
 import tensorflow as tf
 
-experiment_name = 'unet2D_bn_modified_wxent_bn'
+experiment_name = 'unet2D'
+# experiment_name = 'enet'
 
 # Model settings
-model_handle = model_zoo.unet2D_bn_modified
+model_handle = model_structure.unet2D_bn_modified
+# model_handle = model_structure.enet
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
@@ -55,9 +57,9 @@ Pad = False                 #Pad image, i.e. adds columns/rows to them
 offset2 = (10,30)           #number of pixels to crop away on each side of the image (a,b)
                             #each side will be cropped by a random amount in the range `a <= x <= b`
   
-prob = 1                  #Probability [0.0/1.0] (0 no augmentation, 1 always)
+prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 
-# Paths settings (we need to mount our drive before)
+# Paths settings (we need to mount MyDrive before)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
 log_root = '/content/drive/My Drive/logdir'
