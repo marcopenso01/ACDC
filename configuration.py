@@ -28,19 +28,19 @@ loss_type = 'weighted_crossentropy'
 
 # Augmentation settings
 augment_batch = False
-do_rotation_range = False   #random rotation in range "rg" (min,max)
-rg = (-15,15)     
-do_rotation_90 = True      #rotation 90°
-do_rotation_180 = True     #rotation 180°
-do_rotation_270 = True     #rotation 270°
+do_rotation_range = True   #random rotation in range "rg" (min,max)
+rg = (-30,30)     
+do_rotation_90 = False      #rotation 90°
+do_rotation_180 = False     #rotation 180°
+do_rotation_270 = False     #rotation 270°
 do_rotation_reshape = False #rotation of a specific 'angle' with reshape
 do_rotation = False         #rotation of a specific 'angle'
 angle = 45
 crop = True                #crops/cuts away pixels at the sides of the image
 offset = (10, 30)           #The number of pixels to crop away on each side of the image
                             #crops EACH side by a random value from the range (min,max) pixel
-do_fliplr = False           #Flip array in the left/right direction
-do_flipud = False           #Flip array in the up/down direction.
+do_fliplr = True           #Flip array in the left/right direction
+do_flipud = True           #Flip array in the up/down direction.
 RandomContrast= False       #Random change contrast of an image
 min_factor = 1.0
 max_factor = 1.0
