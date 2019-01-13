@@ -58,4 +58,4 @@ def unet2D_bn_modified(images, training, nlabels):
     return pred
 
 
-def enet(images, training, nlabels):
+# def enet(images, training, nlabels):
