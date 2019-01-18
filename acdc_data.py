@@ -171,15 +171,18 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
             file_base = file.split('.nii.gz')[0]
             file_mask = file_base + '_gt.nii.gz'
+            
+            f = file_base.split('_')[0]
+            id_pat = f.split('patient')[-1]
+            print(id_pat)
 
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
-            
-            print(img_dat)
-            img_dat.shape
-
+                    
             img = img_dat[0].copy()
             mask = mask_dat[0].copy()
+            
+            print(img.shape)
 
             img = image_utils.normalise_image(img)   
             #img = image_utils.normalizer(img)
