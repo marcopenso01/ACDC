@@ -175,7 +175,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
             
-            print(img_dat.shape)
+            print(img_dat)
+            img_dat.shape
 
             img = img_dat[0].copy()
             mask = mask_dat[0].copy()
@@ -276,9 +277,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
-                    id_img_list[train_test].append(patient_id
-
-                    write_buffer = write_buffer + 1
+                    
+                    write_buffer += 1
 
                     # Writing needs to happen inside the loop over the slices
                     if write_buffer >= MAX_WRITE_BUFFER:
