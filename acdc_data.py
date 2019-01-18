@@ -154,6 +154,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
     mask_list = {'test': [], 'train': [] }
     img_list = {'test': [], 'train': [] }
+    id_img_list = {'test': [], 'train': [] }
 
     logging.info('Parsing image files')
 
@@ -173,12 +174,14 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
+            
+            print(img_dat.shape)
 
             img = img_dat[0].copy()
             mask = mask_dat[0].copy()
 
             img = image_utils.normalise_image(img)   
-            img = image_utils.normalizer(img)
+            #img = image_utils.normalizer(img)
 
             pixel_size = (img_dat[2].structarr['pixdim'][1],
                           img_dat[2].structarr['pixdim'][2],
@@ -273,6 +276,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
+                    id_img_list[train_test].append(patient_id
 
                     write_buffer += 1
 
