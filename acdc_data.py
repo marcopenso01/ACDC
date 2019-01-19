@@ -174,8 +174,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             
             f = file_base.split('_')[0]
             id_pat = f.split('patient')[-1]
-            id_pat = int(id_pat)      #save id of patient
-                
+                            
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
                     
