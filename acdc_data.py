@@ -151,7 +151,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         if num_points > 0:
             data['images_%s' % tt] = hdf5_file.create_dataset("images_%s" % tt, [num_points] + list(size), dtype=np.float32)
             data['masks_%s' % tt] = hdf5_file.create_dataset("masks_%s" % tt, [num_points] + list(size), dtype=np.uint8)
-
+                        
     mask_list = {'test': [], 'train': [] }
     img_list = {'test': [], 'train': [] }
     id_img_list = {'test': [], 'train': [] }
@@ -174,7 +174,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             
             f = file_base.split('_')[0]
             id_pat = f.split('patient')[-1]
-            print(id_pat)
+            id_pat = int(id_pat)
 
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
@@ -236,7 +236,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
                     mask_vol[:,:,stack_from] = mask_cropped
 
                     stack_from += 1
-
+                    
                 img_list[train_test].append(slice_vol)
                 mask_list[train_test].append(mask_vol)
 
@@ -280,6 +280,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
+                    id_img_list[train_test].append(str(id_pat)+str('_')+str(zz))
                     
                     write_buffer += 1
 
@@ -301,7 +302,9 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
         _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to)
         _release_tmp_memory(img_list, mask_list, train_test)
-
+        
+        for tt in['test','train']:
+        hdf5_file.create_dataset('id_img_%s' % tt, data=np.asarray(id_img_list[tt]))
 
     # After test train loop:
     hdf5_file.close()
