@@ -164,7 +164,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         write_buffer = 0
         counter_from = 0
 
-        for file in file_list[train_test]:
+        for file, frame in zip(file_list[train_test], cardiac_phase_list[train_test]):
 
             logging.info('-----------------------------------------------------------')
             logging.info('Doing: %s' % file)
@@ -174,18 +174,18 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             
             f = file_base.split('_')[0]
             id_pat = f.split('patient')[-1]
-            id_pat = int(id_pat)
-
+            id_pat = int(id_pat)      #save id of patient
+                
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
                     
             img = img_dat[0].copy()
             mask = mask_dat[0].copy()
             
-            print(img.shape)
+            print(img.shape)   # [x,y,N]   x and y might be not equal, we need to resample
 
-            img = image_utils.normalise_image(img)   
-            #img = image_utils.normalizer(img)
+            img = image_utils.normalise_image(img)   # img-mean / st dev
+            img = image_utils.scale(img)             # scale image between 0-1
 
             pixel_size = (img_dat[2].structarr['pixdim'][1],
                           img_dat[2].structarr['pixdim'][2],
@@ -280,8 +280,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
-                    id_img_list[train_test].append(str(id_pat)+str('_')+str(zz))
-                    
+                    id_img_list[train_test].append(str(id_pat)+str('_')+str(frame)+str('_')+str(zz))
+                                        
                     write_buffer += 1
 
                     # Writing needs to happen inside the loop over the slices
