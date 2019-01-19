@@ -319,7 +319,7 @@ def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_fro
 
     img_arr = np.asarray(img_list[train_test], dtype=np.float32)
     mask_arr = np.asarray(mask_list[train_test], dtype=np.uint8)
-    id_arr = np.array(id_img_list[train_test]).astype=('|S9'))
+    id_arr = np.array(id_img_list[train_test].astype=('|S9'))
 
     hdf5_data['images_%s' % train_test][counter_from:counter_to, ...] = img_arr
     hdf5_data['masks_%s' % train_test][counter_from:counter_to, ...] = mask_arr
