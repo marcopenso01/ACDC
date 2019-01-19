@@ -304,7 +304,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         _release_tmp_memory(img_list, mask_list, train_test)
         
         for tt in['test','train']:
-        hdf5_file.create_dataset('id_img_%s' % tt, data=np.asarray(id_img_list[tt]))
+            hdf5_file.create_dataset('id_img_%s' % tt, data=np.asarray(id_img_list[tt]))
 
     # After test train loop:
     hdf5_file.close()
