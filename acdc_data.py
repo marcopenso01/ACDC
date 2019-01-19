@@ -151,6 +151,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         if num_points > 0:
             data['images_%s' % tt] = hdf5_file.create_dataset("images_%s" % tt, [num_points] + list(size), dtype=np.float32)
             data['masks_%s' % tt] = hdf5_file.create_dataset("masks_%s" % tt, [num_points] + list(size), dtype=np.uint8)
+            data['id_images_%s' % tt] = hdf5_file.create_dataset("id_images_%s" % tt, [num_points], dtype='|S9')
                         
     mask_list = {'test': [], 'train': [] }
     img_list = {'test': [], 'train': [] }
@@ -280,14 +281,14 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
                     id_img_list[train_test].append(str(id_pat)+str('_')+str(frame)+str('_')+str(zz))
-                                        
+                                                            
                     write_buffer += 1
 
                     # Writing needs to happen inside the loop over the slices
                     if write_buffer >= MAX_WRITE_BUFFER:
 
                         counter_to = counter_from + write_buffer
-                        _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to)
+                        _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to, id_img_list)
                         _release_tmp_memory(img_list, mask_list, train_test)
 
                         # reset stuff for next iteration
@@ -299,11 +300,11 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         logging.info('Writing remaining data')
         counter_to = counter_from + write_buffer
 
-        _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to)
+        _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to, id_img_list)
         _release_tmp_memory(img_list, mask_list, train_test)
         
-        for tt in['test','train']:
-            hdf5_file.create_dataset('id_img_%s' % tt, data=np.array(id_img_list[tt]).astype('|S9'))
+        #for tt in['test','train']:
+        #   hdf5_file.create_dataset('id_img_%s' % tt, data=np.array(id_img_list[tt]).astype('|S9'))
 
     # After test train loop:
     hdf5_file.close()
@@ -318,9 +319,11 @@ def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_fro
 
     img_arr = np.asarray(img_list[train_test], dtype=np.float32)
     mask_arr = np.asarray(mask_list[train_test], dtype=np.uint8)
+    id_arr = np.asarray(id_img_list[train_test]), dtype='|S9')
 
     hdf5_data['images_%s' % train_test][counter_from:counter_to, ...] = img_arr
     hdf5_data['masks_%s' % train_test][counter_from:counter_to, ...] = mask_arr
+    hdf5_data['id_images_%s' % train_test][...] = id_arr
 
 
 def _release_tmp_memory(img_list, mask_list, train_test):
