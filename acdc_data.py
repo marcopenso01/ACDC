@@ -173,8 +173,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             file_base = file.split('.nii.gz')[0]
             file_mask = file_base + '_gt.nii.gz'
             
-            f = file_base.split('_')[0]
-            id_pat = f.split('patient')[-1]
+            f = f = file_base.split('/content/drive/My Drive/ACDC_challenge/train/patient')[-1]
+            id_pat = f.split('/')[0]
                             
             img_dat = utils.load_nii(file)
             mask_dat = utils.load_nii(file_mask)
@@ -281,7 +281,6 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
                     img_list[train_test].append(slice_cropped)
                     mask_list[train_test].append(mask_cropped)
                     id_img_list[train_test].append(str(id_pat)+str('_')+str(frame)+str('_')+str(zz))
-                    print(id_img_list[train_test])
                                                                                 
                     write_buffer += 1
 
@@ -290,7 +289,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
 
                         counter_to = counter_from + write_buffer
                         _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to, id_img_list)
-                        _release_tmp_memory(img_list, mask_list, train_test)
+                        _release_tmp_memory(img_list, mask_list, train_test, id_img_list)
 
                         # reset stuff for next iteration
                         counter_from = counter_to
@@ -302,10 +301,8 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         counter_to = counter_from + write_buffer
 
         _write_range_to_hdf5(data, train_test, img_list, mask_list, counter_from, counter_to, id_img_list)
-        _release_tmp_memory(img_list, mask_list, train_test)
+        _release_tmp_memory(img_list, mask_list, train_test, id_img_list)
         
-        #for tt in['test','train']:
-        #   hdf5_file.create_dataset('id_img_%s' % tt, data=np.array(id_img_list[tt]).astype('|S9'))
 
     # After test train loop:
     hdf5_file.close()
@@ -324,16 +321,17 @@ def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_fro
 
     hdf5_data['images_%s' % train_test][counter_from:counter_to, ...] = img_arr
     hdf5_data['masks_%s' % train_test][counter_from:counter_to, ...] = mask_arr
-    hdf5_data['id_images_%s' % train_test][] = id_arr
+    hdf5_data['id_images_%s' % train_test][counter_from:counter_to] = id_arr
 
 
-def _release_tmp_memory(img_list, mask_list, train_test):
+def _release_tmp_memory(img_list, mask_list, train_test, id_img_list):
     '''
     Helper function to reset the tmp lists and free the memory
     '''
 
     img_list[train_test].clear()
     mask_list[train_test].clear()
+    id_img_list[train_test].clear()
     gc.collect()
 
 
