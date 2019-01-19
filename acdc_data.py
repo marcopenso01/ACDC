@@ -310,7 +310,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
     hdf5_file.close()
 
 
-def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_from, counter_to):
+def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_from, counter_to, id_img_list):
     '''
     Helper function to write a range of data to the hdf5 datasets
     '''
