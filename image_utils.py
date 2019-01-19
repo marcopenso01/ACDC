@@ -37,12 +37,12 @@ def normalise_image(image):
     s = np.std(img_o)
     return np.divide((img_o - m), s)
 
-#def normalizer(image):
+def scale(image):
     '''
     make image normalize between 0 and 1
     '''
-#    image = (image-image.min())/(image.max()-image.min())
-#    return image
+    image = (image-image.min())/(image.max()-image.min())
+    return image
 
 def normalise_images(X):
     '''
