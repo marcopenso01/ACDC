@@ -323,7 +323,7 @@ def _write_range_to_hdf5(hdf5_data, train_test, img_list, mask_list, counter_fro
 
     hdf5_data['images_%s' % train_test][counter_from:counter_to, ...] = img_arr
     hdf5_data['masks_%s' % train_test][counter_from:counter_to, ...] = mask_arr
-    hdf5_data['id_images_%s' % train_test][...] = id_arr
+    hdf5_data['id_images_%s' % train_test] = id_arr
 
 
 def _release_tmp_memory(img_list, mask_list, train_test):
