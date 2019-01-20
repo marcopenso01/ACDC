@@ -61,10 +61,12 @@ def run_training(continue_run):
     # the following are HDF5 datasets, not numpy arrays
     images_train = data['images_train']
     labels_train = data['masks_train']
+    id_train = data['id_images_train']
 
     if not train_on_all_data:
         images_val = data['images_test']
         labels_val = data['masks_test']
+        id_val = data['id_images_test']
 
     if config.use_data_fraction:
         num_images = images_train.shape[0]
@@ -91,8 +93,8 @@ def run_training(continue_run):
 
         # Generate placeholders for the images and labels.
 
-        image_tensor_shape = [exp_config.batch_size] + list(exp_config.image_size) + [1]
-        mask_tensor_shape = [exp_config.batch_size] + list(exp_config.image_size)
+        image_tensor_shape = [config.batch_size] + list(config.image_size) + [1]
+        mask_tensor_shape = [config.batch_size] + list(config.image_size)
 
         images_pl = tf.placeholder(tf.float32, shape=image_tensor_shape, name='images')
         labels_pl = tf.placeholder(tf.uint8, shape=mask_tensor_shape, name='labels')
@@ -103,30 +105,31 @@ def run_training(continue_run):
         tf.summary.scalar('learning_rate', learning_rate_pl)
 
         # Build a Graph that computes predictions from the inference model.
-        logits = model.inference(images_pl, exp_config, training=training_pl)
+        logits = model.inference(images_pl, config, training=training_pl)
 
         # Add to the Graph the Ops for loss calculation.
         [loss, _, weights_norm] = model.loss(logits,
                                              labels_pl,
-                                             nlabels=exp_config.nlabels,
-                                             loss_type=exp_config.loss_type,
-                                             weight_decay=exp_config.weight_decay)  # second output is unregularised loss
-
-        tf.summary.scalar('loss', loss)
+                                             nlabels=config.nlabels,
+                                             loss_type=config.loss_type,
+                                             weight_decay=config.weight_decay)  # second output is unregularised loss
+        
+        # record how Total loss and weight decay change over time
+        tf.summary.scalar('loss', loss)  
         tf.summary.scalar('weights_norm_term', weights_norm)
 
         # Add to the Graph the Ops that calculate and apply gradients.
-        if exp_config.momentum is not None:
-            train_op = model.training_step(loss, exp_config.optimizer_handle, learning_rate_pl, momentum=exp_config.momentum)
+        if config.momentum is not None:
+            train_op = model.training_step(loss, config.optimizer_handle, learning_rate_pl, momentum=config.momentum)
         else:
-            train_op = model.training_step(loss, exp_config.optimizer_handle, learning_rate_pl)
+            train_op = model.training_step(loss, config.optimizer_handle, learning_rate_pl)
 
         # Add the Op to compare the logits to the labels during evaluation.
         eval_loss = model.evaluation(logits,
                                      labels_pl,
                                      images_pl,
-                                     nlabels=exp_config.nlabels,
-                                     loss_type=exp_config.loss_type)
+                                     nlabels=config.nlabels,
+                                     loss_type=config.loss_type)
 
         # Build the summary Tensor based on the TF collection of Summaries.
         summary = tf.summary.merge_all()
@@ -146,10 +149,10 @@ def run_training(continue_run):
         saver_best_xent = tf.train.Saver()
 
         # Create a session for running Ops on the Graph.
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True  # Do not assign whole gpu memory, just use it on the go
-        config.allow_soft_placement = True  # If a operation is not define it the default device, let it execute in another.
-        sess = tf.Session(config=config)
+        configP = tf.ConfigProto()
+        configP.gpu_options.allow_growth = True  # Do not assign whole gpu memory, just use it on the go
+        configP.allow_soft_placement = True  # If a operation is not define it the default device, let it execute in another.
+        sess = tf.Session(config=configP)
 
         # Instantiate a SummaryWriter to output summaries and the Graph.
         summary_writer = tf.summary.FileWriter(log_dir, sess.graph)
@@ -180,7 +183,7 @@ def run_training(continue_run):
             saver.restore(sess, init_checkpoint_path)
 
         step = init_step
-        curr_lr = exp_config.learning_rate
+        curr_lr = config.learning_rate
 
         no_improvement_counter = 0
         best_val = np.inf
@@ -189,39 +192,29 @@ def run_training(continue_run):
         loss_gradient = np.inf
         best_dice = 0
 
-        for epoch in range(exp_config.max_epochs):
+        for epoch in range(config.max_epochs):
 
             logging.info('EPOCH %d' % epoch)
 
 
             for batch in iterate_minibatches(images_train,
                                              labels_train,
-                                             batch_size=exp_config.batch_size,
-                                             augment_batch=exp_config.augment_batch):
+                                             batch_size=config.batch_size,
+                                             augment_batch=config.augment_batch):
 
-            # You can run this loop with the BACKGROUND GENERATOR, which will lead to some improvements in the
-            # training speed. However, be aware that currently an exception inside this loop may not be caught.
-            # The batch generator may just continue running silently without warning eventhough the code has
-            # crashed.
-            # for batch in BackgroundGenerator(iterate_minibatches(images_train,
-            #                                                      labels_train,
-            #                                                      batch_size=exp_config.batch_size,
-            #                                                      augment_batch=exp_config.augment_batch)):
-
-
-                if exp_config.warmup_training:
+                if config.warmup_training:
                     if step < 50:
-                        curr_lr = exp_config.learning_rate / 10.0
+                        curr_lr = config.learning_rate / 10.0
                     elif step == 50:
-                        curr_lr = exp_config.learning_rate
+                        curr_lr = config.learning_rate
 
                 start_time = time.time()
 
                 # batch = bgn_train.retrieve()
                 x, y = batch
 
-                # TEMPORARY HACK (to avoid incomplete batches
-                if y.shape[0] < exp_config.batch_size:
+                # TEMPORARY HACK (to avoid incomplete batches)
+                if y.shape[0] < config.batch_size:
                     step += 1
                     continue
 
