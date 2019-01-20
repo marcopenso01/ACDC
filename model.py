@@ -76,7 +76,6 @@ def training_step(loss, optimizer_handle, learning_rate, **kwargs):
     :return: The training operation
     '''
 
-
     if 'momentum' in kwargs:
         momentum = kwargs.get('momentum')
         optimizer = optimizer_handle(learning_rate=learning_rate, momentum=momentum)
