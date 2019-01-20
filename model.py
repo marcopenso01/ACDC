@@ -5,10 +5,7 @@ import tensorflow.examples.tutorials.mnist
 
 
 def inference(images, config, training):
-    '''
-    Wrapper function to provide an interface to a model from the model_zoo inside of the model module. 
-    '''
-
+    
     return config.model_handle(images, training, nlabels=config.nlabels)
 
 
