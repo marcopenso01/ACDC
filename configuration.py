@@ -62,6 +62,7 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 
 # Paths settings (we need to mount MyDrive before)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
+#input_folder = '/content/drive/My Drive/ACDC_challenge/test'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
 log_root = '/content/drive/My Drive/logdir'
 
