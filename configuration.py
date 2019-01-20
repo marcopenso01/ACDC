@@ -64,3 +64,12 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
 log_root = '/content/drive/My Drive/logdir'
+
+# Rarely changed settings
+use_data_fraction = False  # Should normally be False
+max_epochs = 20000
+schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve is smaller than this value the LR will
+                                       # be reduced
+
+train_eval_frequency = 200
+val_eval_frequency = 100
