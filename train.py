@@ -84,7 +84,21 @@ def run_training(continue_run):
     logging.info(' - Labels:')
     logging.info(labels_train.shape)
     logging.info(labels_train.dtype)
-    logging.info('Before data_augmentation the number of images is:')
+    logging.info('Before data_augmentation the number of training images is:')
+    logging.info(images_train.shape[0])
+    
+    if config.prob:
+            image_aug, label_aug = aug.augmentation_function(images_train,labels_train)
+    
+    num_aug = image_aug.shape[0]
+    # id images augmented will be b'0.0'
+    id_aug = np.zeros([num_aug,]).astype('|S9')
+    #concatenate
+    id_train = np.concatenate((id__train,id_aug))
+    images_train = np.concatenate((images_train,image_aug))
+    labels_train = np.concatenate((labels_train,label_aug))
+    
+    logging.info('After data_augmentation the number of training images is:')
     logging.info(images_train.shape[0])
 
     # Tell TensorFlow that the model will be built into the default Graph.
@@ -200,7 +214,7 @@ def run_training(continue_run):
             for batch in iterate_minibatches(images_train,
                                              labels_train,
                                              batch_size=config.batch_size,
-                                             augment_batch=config.augment_batch):
+                                             id_train):
 
                 if config.warmup_training:
                     if step < 50:
@@ -441,13 +455,13 @@ def augmentation_function(images, labels, **kwargs):
     return sampled_image_batch, sampled_label_batch
 
 
-def iterate_minibatches(images, labels, batch_size, augment_batch=False):
+def iterate_minibatches(images, labels, batch_size, id_img):
     '''
     Function to create mini batches from the dataset of a certain batch size 
     :param images: hdf5 dataset
     :param labels: hdf5 dataset
     :param batch_size: batch size
-    :param augment_batch: should batch be augmented?
+    :param id_img: hdf5 dataset
     :return: mini batches
     '''
 
@@ -466,17 +480,12 @@ def iterate_minibatches(images, labels, batch_size, augment_batch=False):
 
         X = images[batch_indices, ...]
         y = labels[batch_indices, ...]
+        Xid = id_img[batch_indices]
 
-        image_tensor_shape = [X.shape[0]] + list(exp_config.image_size) + [1]
+        image_tensor_shape = [X.shape[0]] + list(config.image_size) + [1]
         X = np.reshape(X, image_tensor_shape)
 
-        if augment_batch:
-            X, y = augmentation_function(X, y,
-                                         do_rotations=exp_config.do_rotations,
-                                         do_scaleaug=exp_config.do_scaleaug,
-                                         do_fliplr=exp_config.do_fliplr)
-
-        yield X, y
+        yield X, y, Xid
 
 
 def main():
