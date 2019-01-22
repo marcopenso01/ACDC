@@ -65,6 +65,12 @@ input_folder = '/content/drive/My Drive/ACDC_challenge/train'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
 log_root = '/content/drive/My Drive/logdir'
 
+# Pre-process settings
+standardize = False
+normalize = True
+equalize = False
+clahe = False
+
 # Rarely changed settings
 use_data_fraction = False  # Should normally be False
 max_epochs = 20000
