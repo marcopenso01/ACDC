@@ -37,7 +37,7 @@ def standardize_image(image):
     s = np.std(img_o)
     return np.divide((img_o - m), s)
 
-def equalization(image):
+def equalization_image(image):
     '''
     histogram equalization
     '''
