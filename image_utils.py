@@ -27,7 +27,7 @@ def convert_to_uint8(image):
     image = 255.0*np.divide(image.astype(np.float32),image.max())
     return image.astype(np.uint8)
 
-def normalise_image(image):
+def standardize_image(image):
     '''
     make image zero mean and unit standard deviation
     '''
@@ -62,7 +62,7 @@ def CLAHE(image):
     return img_equalized
     
 
-def scale(image):
+def normalize_image(image):
     '''
     make image normalize between 0 and 1
     '''
