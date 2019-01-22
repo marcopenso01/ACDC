@@ -20,6 +20,7 @@ import model as model
 import acdc_data
 import configuration as config
 import augmentation as aug
+from background_generator import BackgroundGenerator
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
@@ -165,6 +166,7 @@ def run_training(continue_run):
             train_op = model.training_step(loss, config.optimizer_handle, learning_rate_pl)
 
         # Add the Op to compare the logits to the labels during evaluation.
+        # loss and dice on a minibatch
         eval_loss = model.evaluation(logits,
                                      labels_pl,
                                      images_pl,
@@ -388,8 +390,8 @@ def do_eval(sess,
     dice_ii = 0
     num_batches = 0
 
-    for batch in iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False):  # No aug in evaluation
-    # As before you can wrap the iterate_minibatches function in the BackgroundGenerator class for speed improvements
+    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False)):  # No aug in evaluation
+    # you can wrap the iterate_minibatches function in the BackgroundGenerator class for speed improvements
     # but at the risk of not catching exceptions
 
         x, y = batch
