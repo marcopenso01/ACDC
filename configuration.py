@@ -5,7 +5,7 @@ experiment_name = 'unet2D'
 # experiment_name = 'enet'
 
 # Model settings
-model_handle = model_structure.unet2D_bn_modified
+model_handle = model_structure.unet2D
 # model_handle = model_structure.enet
 
 # Data settings
