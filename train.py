@@ -84,22 +84,48 @@ def run_training(continue_run):
     logging.info(' - Labels:')
     logging.info(labels_train.shape)
     logging.info(labels_train.dtype)
-    logging.info('Before data_augmentation the number of training images is:')
-    logging.info(images_train.shape[0])
+        
+    #pre-process
+    for image in images_train:
+        if config.standardize:
+            image = image_utils.standardize_image(image)
+        if config.normalize:
+            image = image_utils.normalize_image(image)
+        if config.equalize:
+            image = image_utils.equalization_image(image)
+        if config.clahe:
+            image = image_utils.CLAHE(image)
+            
+    for image in images_val:
+        if config.standardize:
+            image = image_utils.standardize_image(image)
+        if config.normalize:
+            image = image_utils.normalize_image(image)
+        if config.equalize:
+            image = image_utils.equalization_image(image)
+        if config.clahe:
+            image = image_utils.CLAHE(image)
+            
     
-    if config.prob:
-            image_aug, label_aug = aug.augmentation_function(images_train,labels_train)
+    if config.prob:   #if prob is not 0
+        logging.info('Before data_augmentation the number of training images is:')
+        logging.info(images_train.shape[0])
+        #augmentation
+        image_aug, label_aug = aug.augmentation_function(images_train,labels_train)
     
-    num_aug = image_aug.shape[0]
-    # id images augmented will be b'0.0'
-    id_aug = np.zeros([num_aug,]).astype('|S9')
-    #concatenate
-    id_train = np.concatenate((id__train,id_aug))
-    images_train = np.concatenate((images_train,image_aug))
-    labels_train = np.concatenate((labels_train,label_aug))
+        #num_aug = image_aug.shape[0]
+        # id images augmented will be b'0.0'
+        #id_aug = np.zeros([num_aug,]).astype('|S9')
+        #concatenate
+        #id_train = np.concatenate((id__train,id_aug))
+        images_train = np.concatenate((images_train,image_aug))
+        labels_train = np.concatenate((labels_train,label_aug))
     
-    logging.info('After data_augmentation the number of training images is:')
-    logging.info(images_train.shape[0])
+        logging.info('After data_augmentation the number of training images is:')
+        logging.info(images_train.shape[0])
+    else:
+        logging.info('No data_augmentation. Number of training images is:')
+        logging.info(images_train.shape[0])
 
     # Tell TensorFlow that the model will be built into the default Graph.
 
@@ -213,8 +239,7 @@ def run_training(continue_run):
 
             for batch in iterate_minibatches(images_train,
                                              labels_train,
-                                             batch_size=config.batch_size,
-                                             id_train):
+                                             batch_size=config.batch_size):
 
                 if config.warmup_training:
                     if step < 50:
@@ -254,7 +279,7 @@ def run_training(continue_run):
                     summary_writer.add_summary(summary_str, step)
                     summary_writer.flush()
 
-                if (step + 1) % exp_config.train_eval_frequency == 0:
+                if (step + 1) % config.train_eval_frequency == 0:
 
                     logging.info('Training Data Eval:')
                     [train_loss, train_dice] = do_eval(sess,
@@ -264,7 +289,7 @@ def run_training(continue_run):
                                                        training_pl,
                                                        images_train,
                                                        labels_train,
-                                                       exp_config.batch_size)
+                                                       config.batch_size)
 
                     train_summary_msg = sess.run(train_summary, feed_dict={train_error_: train_loss,
                                                                            train_dice_: train_dice}
@@ -278,7 +303,7 @@ def run_training(continue_run):
 
                     logging.info('loss gradient is currently %f' % loss_gradient)
 
-                    if exp_config.schedule_lr and loss_gradient < exp_config.schedule_gradient_threshold:
+                    if config.schedule_lr and loss_gradient < config.schedule_gradient_threshold:
                         logging.warning('Reducing learning rate!')
                         curr_lr /= 10.0
                         logging.info('Learning rate changed to: %f' % curr_lr)
@@ -295,7 +320,7 @@ def run_training(continue_run):
                     last_train = train_loss
 
                 # Save a checkpoint and evaluate the model periodically.
-                if (step + 1) % exp_config.val_eval_frequency == 0:
+                if (step + 1) % config.val_eval_frequency == 0:
 
                     checkpoint_file = os.path.join(log_dir, 'model.ckpt')
                     saver.save(sess, checkpoint_file, global_step=step)
@@ -312,7 +337,7 @@ def run_training(continue_run):
                                                        training_pl,
                                                        images_val,
                                                        labels_val,
-                                                       exp_config.batch_size)
+                                                       config.batch_size)
 
                         val_summary_msg = sess.run(val_summary, feed_dict={val_error_: val_loss, val_dice_: val_dice}
                         )
@@ -354,7 +379,7 @@ def do_eval(sess,
     :param labels_placeholder: Placeholder for the masks
     :param training_time_placeholder: Placeholder toggling the training/testing mode. 
     :param images: A numpy array or h5py dataset containing the images
-    :param labels: A numpy array or h45py dataset containing the corresponding labels 
+    :param labels: A numpy array or h5py dataset containing the corresponding labels 
     :param batch_size: The batch_size to use. 
     :return: The average loss (as defined in the experiment), and the average dice over all `images`. 
     '''
@@ -363,7 +388,7 @@ def do_eval(sess,
     dice_ii = 0
     num_batches = 0
 
-    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False)):  # No aug in evaluation
+    for batch in iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False):  # No aug in evaluation
     # As before you can wrap the iterate_minibatches function in the BackgroundGenerator class for speed improvements
     # but at the risk of not catching exceptions
 
@@ -389,79 +414,13 @@ def do_eval(sess,
     return avg_loss, avg_dice
 
 
-def augmentation_function(images, labels, **kwargs):
-    '''
-    Function for augmentation of minibatches. It will transform a set of images and corresponding labels
-    by a number of optional transformations. Each image/mask pair in the minibatch will be seperately transformed
-    with random parameters. 
-    :param images: A numpy array of shape [minibatch, X, Y, (Z), nchannels]
-    :param labels: A numpy array containing a corresponding label mask
-    :param do_rotations: Rotate the input images by a random angle between -15 and 15 degrees.
-    :param do_scaleaug: Do scale augmentation by sampling one length of a square, then cropping and upsampling the image
-                        back to the original size. 
-    :param do_fliplr: Perform random flips with a 50% chance in the left right direction. 
-    :return: A mini batch of the same size but with transformed images and masks. 
-    '''
 
-    if images.ndim > 4:
-        raise AssertionError('Augmentation will only work with 2D images')
-
-    do_rotations = kwargs.get('do_rotations', False)
-    do_scaleaug = kwargs.get('do_scaleaug', False)
-    do_fliplr = kwargs.get('do_fliplr', False)
-
-
-    new_images = []
-    new_labels = []
-    num_images = images.shape[0]
-
-    for ii in range(num_images):
-
-        img = np.squeeze(images[ii,...])
-        lbl = np.squeeze(labels[ii,...])
-
-        # ROTATE
-        if do_rotations:
-            angles = kwargs.get('angles', (-15,15))
-            random_angle = np.random.uniform(angles[0], angles[1])
-            img = image_utils.rotate_image(img, random_angle)
-            lbl = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
-
-        # RANDOM CROP SCALE
-        if do_scaleaug:
-            offset = kwargs.get('offset', 30)
-            n_x, n_y = img.shape
-            r_y = np.random.random_integers(n_y-offset, n_y)
-            p_x = np.random.random_integers(0, n_x-r_y)
-            p_y = np.random.random_integers(0, n_y-r_y)
-
-            img = image_utils.resize_image(img[p_y:(p_y+r_y), p_x:(p_x+r_y)],(n_x, n_y))
-            lbl = image_utils.resize_image(lbl[p_y:(p_y + r_y), p_x:(p_x + r_y)], (n_x, n_y), interp=cv2.INTER_NEAREST)
-
-        # RANDOM FLIP
-        if do_fliplr:
-            coin_flip = np.random.randint(2)
-            if coin_flip == 0:
-                img = np.fliplr(img)
-                lbl = np.fliplr(lbl)
-
-
-        new_images.append(img[..., np.newaxis])
-        new_labels.append(lbl[...])
-
-    sampled_image_batch = np.asarray(new_images)
-    sampled_label_batch = np.asarray(new_labels)
-
-    return sampled_image_batch, sampled_label_batch
-
-
-def iterate_minibatches(images, labels, batch_size, id_img):
+def iterate_minibatches(images, labels, batch_size):
     '''
     Function to create mini batches from the dataset of a certain batch size 
     :param images: hdf5 dataset
     :param labels: hdf5 dataset
     :param batch_size: batch size
-    :param id_img: hdf5 dataset
     :return: mini batches
     '''
 
@@ -480,12 +439,12 @@ def iterate_minibatches(images, labels, batch_size, id_img):
 
         X = images[batch_indices, ...]
         y = labels[batch_indices, ...]
-        Xid = id_img[batch_indices]
+        #Xid = id_img[batch_indices]
 
         image_tensor_shape = [X.shape[0]] + list(config.image_size) + [1]
         X = np.reshape(X, image_tensor_shape)
 
-        yield X, y, Xid
+        yield X, y
 
 
 def main():
@@ -496,7 +455,7 @@ def main():
         continue_run = False
 
     # Copy experiment config file
-    shutil.copy(exp_config.__file__, log_dir)
+    shutil.copy(config.__file__, log_dir)
 
     run_training(continue_run)
 
