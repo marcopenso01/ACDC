@@ -184,7 +184,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             
             print(img.shape)   # [x,y,N]   x and y might be not equal, we need to resample
 
-            img = image_utils.normalise_image(img)   # img-mean / st dev
+            #img = image_utils.normalise_image(img)   # img-mean / st dev
             #img = image_utils.scale(img)             # scale image between 0-1
 
             pixel_size = (img_dat[2].structarr['pixdim'][1],
