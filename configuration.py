@@ -7,6 +7,7 @@ experiment_name = 'unet2D'
 # Model settings
 model_handle = model_structure.unet2D
 # model_handle = model_structure.enet
+weight_init = 'xavier_uniform'    # xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
