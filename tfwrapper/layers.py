@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import configuration as config
 
 from tfwrapper import utils
 
@@ -614,7 +615,8 @@ def dense_layer_bn(bottom,
 ### VARIABLE INITIALISERS ####################################################################################
 
 def get_weight_variable(shape, name=None, type='xavier_uniform', regularize=True, **kwargs):
-
+    
+    type = config.weight_init
     initialise_from_constant = False
     if type == 'xavier_uniform':
         initial = xavier_initializer(uniform=True, dtype=tf.float32)
