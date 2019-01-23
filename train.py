@@ -22,7 +22,7 @@ import acdc_data
 import configuration as config
 import augmentation as aug
 from background_generator import BackgroundGenerator
-import model_structure
+import model_structure as model_structure
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
@@ -151,7 +151,7 @@ def run_training(continue_run):
         if config.experiment_name == 'unet2D':
             logits = model.inference(images_pl, config, training=training_pl)
         elif config.experiment_name == 'enet':
-            with slim.arg_scope(ENet_arg_scope(weight_decay=weight_decay)):
+            with slim.arg_scope(ENet_arg_scope(weight_decay=2e-4)):
                 logits = model_structure.ENet(images_pl,
                                               num_classes=config.nlabels,
                                               batch_size=config.batch_size,
