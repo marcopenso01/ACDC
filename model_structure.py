@@ -414,7 +414,7 @@ def bottleneck(inputs,
         return net
 
 
-def enet(inputs,
+def ENet(inputs,
          num_classes,
          batch_size,
          num_initial_blocks=1,
