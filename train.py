@@ -151,14 +151,15 @@ def run_training(continue_run):
         if config.experiment_name == 'unet2D':
             logits = model.inference(images_pl, config, training=training_pl)
         elif config.experiment_name == 'enet':
-            logits = model_structure.ENet(images_pl,
-                                          num_classes=config.nlabels,
-                                          batch_size=config.batch_size,
-                                          is_training=True,
-                                          reuse=None,
-                                          num_initial_blocks=1,
-                                          stage_two_repeat=2,
-                                          skip_connections=False)
+            with slim.arg_scope(ENet_arg_scope(weight_decay=weight_decay)):
+                logits = model_structure.ENet(images_pl,
+                                              num_classes=config.nlabels,
+                                              batch_size=config.batch_size,
+                                              is_training=True,
+                                              reuse=None,
+                                              num_initial_blocks=1,
+                                              stage_two_repeat=2,
+                                              skip_connections=False)
         else:
             logging.warning('invalid experiment_name!')    
         
