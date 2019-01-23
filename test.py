@@ -6,7 +6,7 @@ import glob
 from importlib.machinery import SourceFileLoader
 import argparse
 
-import config.system as sys_config
+import configuration as config
 import utils
 import acdc_data
 import image_utils
@@ -16,17 +16,17 @@ def main(exp_config):
 
     # Load data
     data = acdc_data.load_and_maybe_process_data(
-        input_folder=sys_config.data_root,
-        preprocessing_folder=sys_config.preproc_folder,
-        mode=exp_config.data_mode,
-        size=exp_config.image_size,
-        target_resolution=exp_config.target_resolution,
+        input_folder=config.input_folder,
+        preprocessing_folder=config.preprocessing_folder,
+        mode=config.data_mode,
+        size=config.image_size,
+        target_resolution=config.target_resolution,
         force_overwrite=False
     )
 
     batch_size = 1
 
-    image_tensor_shape = [batch_size] + list(exp_config.image_size) + [1]
+    image_tensor_shape = [batch_size] + list(config.image_size) + [1]
     images_pl = tf.placeholder(tf.float32, shape=image_tensor_shape, name='images')
 
     mask_pl, softmax_pl = model.predict(images_pl, exp_config)
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     parser.add_argument("EXP_PATH", type=str, help="Path to experiment folder (assuming you are in the working directory)")
     args = parser.parse_args()
 
-    base_path = sys_config.project_root
+    base_path = config.project_root
 
     model_path = os.path.join(base_path, args.EXP_PATH)
     config_file = glob.glob(model_path + '/*py')[0]
