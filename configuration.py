@@ -1,5 +1,8 @@
 import model_structure
 import tensorflow as tf
+import os
+import socket
+import logging
 
 experiment_name = 'unet2D'
 # experiment_name = 'enet'
@@ -63,7 +66,8 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 input_folder = '/content/drive/My Drive/ACDC_challenge/train'
 #input_folder = '/content/drive/My Drive/ACDC_challenge/test'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'
-log_root = '/content/drive/My Drive/logdir'
+project_root = '/content/drive/My Drive'
+log_root = os.path.join(project_root, 'acdc_logdir')
 
 # Pre-process settings
 standardize = False
