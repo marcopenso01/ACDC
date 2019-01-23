@@ -4,8 +4,8 @@ import tensorflow as tf
 experiment_name = 'unet2D'
 # experiment_name = 'enet'
 
-# Model settings
-model_handle = model_structure.unet2D  # unet2D / ENet
+# Model settings Unet2D
+model_handle = model_structure.unet2D
 weight_init = 'xavier_uniform'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 
 # Data settings
