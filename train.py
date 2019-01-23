@@ -7,6 +7,7 @@ import pandas as pd
 import h5py
 import tensorflow as tf
 import shutil
+slim = tf.contrib.slim
 
 import SimpleITK as sitk
 from multiprocessing import pool
@@ -21,6 +22,7 @@ import acdc_data
 import configuration as config
 import augmentation as aug
 from background_generator import BackgroundGenerator
+import model_structure
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
@@ -146,7 +148,20 @@ def run_training(continue_run):
         tf.summary.scalar('learning_rate', learning_rate_pl)
 
         # Build a Graph that computes predictions from the inference model.
-        logits = model.inference(images_pl, config, training=training_pl)
+        if config.experiment_name == 'unet2D':
+            logits = model.inference(images_pl, config, training=training_pl)
+        elif config.experiment_name == 'enet':
+            logits = model_structure.ENet(images_pl,
+                                          num_classes=config.nlabels,
+                                          batch_size=config.batch_size,
+                                          is_training=True,
+                                          reuse=None,
+                                          num_initial_blocks=1,
+                                          stage_two_repeat=2,
+                                          skip_connections=False)
+        else:
+            logging.warning('invalid experiment_name!')    
+        
 
         # Add to the Graph the Ops for loss calculation.
         [loss, _, weights_norm] = model.loss(logits,
