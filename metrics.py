@@ -74,7 +74,7 @@ def compute_metrics_on_directories_raw(dir_gt, dir_pred):
         # load ground truth and prediction
         gt, _, header = utils.load_nii(p_gt)
         pred, _, _ = utils.load_nii(p_pred)
-        zooms = header.get_zooms()
+        zooms = header.get_zooms()   #get_zooms() to get the voxel sizes in millimeters
 
         # calculate measures for each structure
         for struc in [3,1,2]:
