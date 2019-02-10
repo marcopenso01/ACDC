@@ -54,7 +54,7 @@ def unet2D(images, training, nlabels):
 
     pred = layers.conv2D_layer_bn(conv9_2, 'pred', num_filters=nlabels, kernel_size=(1,1), activation=tf.identity, training=training)
 
-return pred
+    return pred
 
 
 
