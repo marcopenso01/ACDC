@@ -34,6 +34,7 @@ def augmentation_function(images, labels):
     crop = config.crop
     do_fliplr = config.do_fliplr
     do_flipud = config.do_flipud
+    Pad = config.Pad
     
     # Probability to perform a generic operation
     prob = config.prob
