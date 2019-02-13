@@ -57,8 +57,6 @@ def augmentation_function(images, labels):
                 if coin_flip < prob :
                     angles = config.rg
                     random_angle = np.random.uniform(angles[0], angles[1])
-                    imgg = img.copy()
-                    lbll = lbl.copy()
                     imgg = image_utils.rotate_image(img, random_angle)
                     lbll = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
                     if (random.randint(0,1)):
@@ -74,8 +72,6 @@ def augmentation_function(images, labels):
             if do_fliplr:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    imgg = img.copy()
-                    lbll = lbl.copy()
                     imgg = np.fliplr(img)
                     lbll = np.fliplr(lbl)
                     new_images.append(imgg[...])
@@ -98,8 +94,6 @@ def augmentation_function(images, labels):
             if do_flipud:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    imgg = img.copy()
-                    lbll = lbl.copy()
                     imgg = np.flipud(img)
                     lbll = np.flipud(lbl)
                     new_images.append(imgg[...])
@@ -122,8 +116,6 @@ def augmentation_function(images, labels):
             # FLIP up/down + FLIP felft/right + rotation
             coin_flip = np.random.uniform(low=0.0, high=1.0)
             if coin_flip < prob :
-                imgg = img.copy()
-                lbll = lbl.copy()
                 imgg = np.flipud(img)
                 lbll = np.flipud(lbl)
                 imgg = np.fliplr(imgg)
@@ -147,8 +139,6 @@ def augmentation_function(images, labels):
                 if coin_flip < prob :
                     augmenters = [iaa.Crop(px=config.offset)]
                     seq = iaa.Sequential(augmenters, random_order=True)
-                    imgg = img.copy()
-                    lbll = lbl.copy()
                     imgg = seq.augment_image(img)
                     lbll = seq.augment_image(lbl)
                     if (random.randint(0,1)):
@@ -162,8 +152,6 @@ def augmentation_function(images, labels):
 
             # ROTATION + CROP
             random_angle = np.random.uniform(angles[0], angles[1])
-            imgg = img.copy()
-            lbll = lbl.copy()
             imgg = image_utils.rotate_image(img, random_angle)
             lbll = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
             augmenters = [iaa.Crop(px=config.offset)]
