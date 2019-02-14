@@ -25,7 +25,7 @@ learning_rate = 0.01
 optimizer_handle = tf.train.AdamOptimizer
 schedule_lr = False
 warmup_training = True
-weight_decay = 0.00000
+weight_decay = 0.00000   #0.0005
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice'
 loss_type = 'weighted_crossentropy'
