@@ -30,7 +30,7 @@ def augmentation_function(images, labels):
     ''' 
     
     # Define in configuration.py which operations to perform
-    do_rotation_90
+    do_rotation_90 = config.do_rotation_90
     do_fliplr = config.do_fliplr
     do_flipud = config.do_flipud
     
