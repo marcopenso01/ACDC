@@ -27,8 +27,10 @@ schedule_lr = False
 warmup_training = True
 weight_decay = 0.00000   #0.0005
 momentum = None
-# loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice'
+# loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
+alfa = 1
+beta = 0.2   #1
 
 # Augmentation settings
 do_rotation_range = False   #random rotation in range "rg" (min,max)
