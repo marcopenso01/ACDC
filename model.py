@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tfwrapper import losses
+import configuration as config
 
 import tensorflow.examples.tutorials.mnist
 
@@ -41,7 +42,7 @@ def loss(logits, labels, nlabels, loss_type, weight_decay=0.0):
     elif loss_type == 'dice_onlyfg':
         segmentation_loss = losses.dice_loss(logits, labels, only_foreground=True)
     elif loss_type == 'crossentropy_and_dice':
-        segmentation_loss = losses.pixel_wise_cross_entropy_loss(logits, labels) + 0.2*losses.dice_loss(logits, labels)
+        segmentation_loss = config.alfa*losses.pixel_wise_cross_entropy_loss(logits, labels) + config.beta*losses.dice_loss(logits, labels)
     else:
         raise ValueError('Unknown loss: %s' % loss_type)
 
