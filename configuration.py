@@ -21,11 +21,11 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 10
-learning_rate = 0.01
-optimizer_handle = tf.train.AdamOptimizer
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
+optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
-weight_decay = 0.00000   #0.0005
+weight_decay = 0.00000   # enet: 0.0004
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
@@ -79,7 +79,7 @@ clahe = False
 
 # Rarely changed settings
 use_data_fraction = False  # Should normally be False
-max_epochs = 200
+max_epochs = 300
 schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve is smaller than this value the LR will
                                        # be reduced
 
