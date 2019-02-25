@@ -42,4 +42,4 @@ class BackgroundGenerator(threading.Thread):
         return self.next()
 
     def __iter__(self):
-return self
+        return self
