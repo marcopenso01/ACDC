@@ -10,7 +10,7 @@ import random
 from glob import glob
 from datetime import datetime
 from shutil import copyfile
-import imgaug as ia
+# import imgaug as ia
 from imgaug import augmenters as iaa
 from scipy.misc import imsave, imread
 
