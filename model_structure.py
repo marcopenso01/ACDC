@@ -29,25 +29,25 @@ def unet2D(images, training, nlabels):
     conv5_2 = layers.conv2D_layer_bn(conv5_1, 'conv5_2', num_filters=1024, training=training)
 
     upconv4 = layers.deconv2D_layer_bn(conv5_2, name='upconv4', kernel_size=(4, 4), strides=(2, 2), num_filters=512, training=training)
-    concat4 = layers.crop_and_concat_layer([conv4_2, upconv4], axis=3, name='concat4')
+    concat4 = layers.crop_and_concat_layer([conv4_2, upconv4], axis=3)
 
     conv6_1 = layers.conv2D_layer_bn(concat4, 'conv6_1', num_filters=512, training=training)
     conv6_2 = layers.conv2D_layer_bn(conv6_1, 'conv6_2', num_filters=512, training=training)
 
     upconv3 = layers.deconv2D_layer_bn(conv6_2, name='upconv3', kernel_size=(4, 4), strides=(2, 2), num_filters=256, training=training)
-    concat3 = layers.crop_and_concat_layer([conv3_2, upconv3], axis=3, name='concat3')
+    concat3 = layers.crop_and_concat_layer([conv3_2, upconv3], axis=3)
 
     conv7_1 = layers.conv2D_layer_bn(concat3, 'conv7_1', num_filters=256, training=training)
     conv7_2 = layers.conv2D_layer_bn(conv7_1, 'conv7_2', num_filters=256, training=training)
 
     upconv2 = layers.deconv2D_layer_bn(conv7_2, name='upconv2', kernel_size=(4, 4), strides=(2, 2), num_filters=128, training=training)
-    concat2 = layers.crop_and_concat_layer([conv2_2, upconv2], axis=3, name='concat2')
+    concat2 = layers.crop_and_concat_layer([conv2_2, upconv2], axis=3)
 
     conv8_1 = layers.conv2D_layer_bn(concat2, 'conv8_1', num_filters=128, training=training)
     conv8_2 = layers.conv2D_layer_bn(conv8_1, 'conv8_2', num_filters=128, training=training)
 
     upconv1 = layers.deconv2D_layer_bn(conv8_2, name='upconv1', kernel_size=(4, 4), strides=(2, 2), num_filters=64, training=training)
-    concat1 = layers.crop_and_concat_layer([conv1_2, upconv1], axis=3, name='concat1')
+    concat1 = layers.crop_and_concat_layer([conv1_2, upconv1], axis=3)
 
     conv9_1 = layers.conv2D_layer_bn(concat1, 'conv9_1', num_filters=64, training=training)
     conv9_2 = layers.conv2D_layer_bn(conv9_1, 'conv9_2', num_filters=64, training=training)
