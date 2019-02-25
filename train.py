@@ -406,7 +406,7 @@ def do_eval(sess,
     dice_ii = 0
     num_batches = 0
 
-    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False)):  # No aug in evaluation
+    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size)):  # No aug in evaluation
     # you can wrap the iterate_minibatches function in the BackgroundGenerator class for speed improvements
     # but at the risk of not catching exceptions
 
