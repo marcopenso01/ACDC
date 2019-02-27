@@ -276,85 +276,82 @@ def run_training(continue_run):
                     summary_writer.add_summary(summary_str, step)
                     summary_writer.flush()
 
-                if (step + 1) % config.train_eval_frequency == 0:
-
-                    logging.info('Training Data Eval:')
-                    [train_loss, train_dice] = do_eval(sess,
-                                                       eval_loss,
-                                                       images_pl,
-                                                       labels_pl,
-                                                       training_pl,
-                                                       images_train,
-                                                       labels_train,
-                                                       config.batch_size)
-
-                    train_summary_msg = sess.run(train_summary, feed_dict={train_error_: train_loss,
-                                                                           train_dice_: train_dice}
-                                                 )
-                    summary_writer.add_summary(train_summary_msg, step)
-
-                    loss_history.append(train_loss)
-                    if len(loss_history) > 5:
-                        loss_history.pop(0)
-                        loss_gradient = (loss_history[-5] - loss_history[-1]) / 2
-
-                    logging.info('loss gradient is currently %f' % loss_gradient)
-
-                    if config.schedule_lr and loss_gradient < config.schedule_gradient_threshold:
-                        logging.warning('Reducing learning rate!')
-                        curr_lr /= 10.0
-                        logging.info('Learning rate changed to: %f' % curr_lr)
-
-                        # reset loss history to give the optimisation some time to start decreasing again
-                        loss_gradient = np.inf
-                        loss_history = []
-
-                    if train_loss <= last_train:  # best_train:
-                        logging.info('Decrease in training error!')
-                    else:
-                        logging.info('No improvment in training error for %d steps' % no_improvement_counter)
-
-                    last_train = train_loss
-
-                # Save a checkpoint and evaluate the model periodically.
-                if (step + 1) % config.val_eval_frequency == 0:
-
-                    checkpoint_file = os.path.join(log_dir, 'model.ckpt')
-                    saver.save(sess, checkpoint_file, global_step=step)
-                    # Evaluate against the training set.
-
-                    if not train_on_all_data:
-
-                        # Evaluate against the validation set.
-                        logging.info('Validation Data Eval:')
-                        [val_loss, val_dice] = do_eval(sess,
-                                                       eval_loss,
-                                                       images_pl,
-                                                       labels_pl,
-                                                       training_pl,
-                                                       images_val,
-                                                       labels_val,
-                                                       config.batch_size)
-
-                        val_summary_msg = sess.run(val_summary, feed_dict={val_error_: val_loss, val_dice_: val_dice}
-                        )
-                        summary_writer.add_summary(val_summary_msg, step)
-
-                        if val_dice > best_dice:
-                            best_dice = val_dice
-                            best_file = os.path.join(log_dir, 'model_best_dice.ckpt')
-                            saver_best_dice.save(sess, best_file, global_step=step)
-                            logging.info('Found new best dice on validation set! - %f -  Saving model_best_dice.ckpt' % val_dice)
-
-                        if val_loss < best_val:
-                            best_val = val_loss
-                            best_file = os.path.join(log_dir, 'model_best_xent.ckpt')
-                            saver_best_xent.save(sess, best_file, global_step=step)
-                            logging.info('Found new best crossentropy on validation set! - %f -  Saving model_best_xent.ckpt' % val_loss)
-
-
                 step += 1
+                
+            # end epoch
+            
+            logging.info('Training Data Eval:')
+            [train_loss, train_dice] = do_eval(sess,
+                                               eval_loss,
+                                               images_pl,
+                                               labels_pl,
+                                               training_pl,
+                                               images_train,
+                                               labels_train,
+                                               config.batch_size)
 
+            train_summary_msg = sess.run(train_summary, feed_dict={train_error_: train_loss,
+                                                                   train_dice_: train_dice}
+                                         )
+            summary_writer.add_summary(train_summary_msg, step)
+
+            loss_history.append(train_loss)
+            if len(loss_history) > 5:
+                loss_history.pop(0)
+                loss_gradient = (loss_history[-5] - loss_history[-1]) / 2
+
+            logging.info('loss gradient is currently %f' % loss_gradient)
+
+            if config.schedule_lr and loss_gradient < config.schedule_gradient_threshold:
+                logging.warning('Reducing learning rate!')
+                curr_lr /= 10.0
+                logging.info('Learning rate changed to: %f' % curr_lr)
+
+                # reset loss history to give the optimisation some time to start decreasing again
+                loss_gradient = np.inf
+                loss_history = []
+
+            if train_loss <= last_train:  # best_train:
+                logging.info('Decrease in training error!')
+            else:
+                logging.info('No improvment in training error for %d steps' % no_improvement_counter)
+
+            last_train = train_loss
+            
+            
+            # Save a checkpoint and evaluate the model periodically.
+            checkpoint_file = os.path.join(log_dir, 'model.ckpt')
+            saver.save(sess, checkpoint_file, global_step=step)
+            # Evaluate against the training set.
+
+            if not train_on_all_data:
+                # Evaluate against the validation set.
+                logging.info('Validation Data Eval:')
+                [val_loss, val_dice] = do_eval(sess,
+                                               eval_loss,
+                                               images_pl,
+                                               labels_pl,
+                                               training_pl,
+                                               images_val,
+                                               labels_val,
+                                               config.batch_size)
+
+                val_summary_msg = sess.run(val_summary, feed_dict={val_error_: val_loss, val_dice_: val_dice}
+                )
+                summary_writer.add_summary(val_summary_msg, step)
+
+                if val_dice > best_dice:
+                    best_dice = val_dice
+                    best_file = os.path.join(log_dir, 'model_best_dice.ckpt')
+                    saver_best_dice.save(sess, best_file, global_step=step)
+                    logging.info('Found new best dice on validation set! - %f -  Saving model_best_dice.ckpt' % val_dice)
+
+                if val_loss < best_val:
+                    best_val = val_loss
+                    best_file = os.path.join(log_dir, 'model_best_xent.ckpt')
+                    saver_best_xent.save(sess, best_file, global_step=step)
+                    logging.info('Found new best crossentropy on validation set! - %f -  Saving model_best_xent.ckpt' % val_loss)
+        
         sess.close()
     data.close()
 
