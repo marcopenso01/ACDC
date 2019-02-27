@@ -62,7 +62,7 @@ def predict(images, exp_config):
 
     logits = exp_config.model_handle(images, training=tf.constant(False, dtype=tf.bool), nlabels=exp_config.nlabels)
     softmax = tf.nn.softmax(logits)
-    mask = tf.arg_max(softmax, dimension=-1)
+    mask = tf.math.argmax(softmax, axis=-1)
 
     return mask, softmax
 
@@ -103,7 +103,7 @@ def evaluation(logits, labels, images, nlabels, loss_type):
     :return: The loss without weight decay, the foreground dice of a minibatch
     '''
 
-    mask = tf.arg_max(tf.nn.softmax(logits, dim=-1), dimension=-1)  # was 3
+    mask = tf.math.argmax(tf.nn.softmax(logits, axis=-1), axis=-1)  # was 3
     mask_gt = labels
 
     tf.summary.image('example_gt', prepare_tensor_for_summary(mask_gt, mode='mask', nlabels=nlabels))
