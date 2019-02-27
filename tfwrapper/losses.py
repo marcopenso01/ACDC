@@ -73,7 +73,7 @@ def pixel_wise_cross_entropy_loss(logits, labels):
     Simple wrapper for the normal tensorflow cross entropy loss 
     '''
 
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels))
     return loss
 
 
@@ -96,7 +96,7 @@ def pixel_wise_cross_entropy_loss_weighted(logits, labels, class_weights):
     weight_map = tf.multiply(flat_labels, class_weights)
     weight_map = tf.reduce_sum(weight_map, axis=1)
 
-    loss_map = tf.nn.softmax_cross_entropy_with_logits(logits=flat_logits, labels=flat_labels)
+    loss_map = tf.nn.softmax_cross_entropy_with_logits_v2(logits=flat_logits, labels=flat_labels)
     weighted_loss = tf.multiply(loss_map, weight_map)
 
     loss = tf.reduce_mean(weighted_loss)
