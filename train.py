@@ -108,6 +108,7 @@ def run_training(continue_run):
         logging.info('No data_augmentation. Number of training images is:')
         logging.info(images_train.shape[0])
 
+
     # Tell TensorFlow that the model will be built into the default Graph.
 
     with tf.Graph().as_default():
@@ -410,7 +411,6 @@ def do_eval(sess,
     return avg_loss, avg_dice
 
 
-
 def iterate_minibatches(images, labels, batch_size):
     '''
     Function to create mini batches from the dataset of a certain batch size 
@@ -440,6 +440,7 @@ def iterate_minibatches(images, labels, batch_size):
         image_tensor_shape = [X.shape[0]] + list(config.image_size) + [1]
         X = np.reshape(X, image_tensor_shape)
 
+            
         yield X, y
 
 
