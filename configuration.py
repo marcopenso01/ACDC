@@ -31,6 +31,7 @@ momentum = None
 loss_type = 'weighted_crossentropy'
 alfa = 1
 beta = 0.2   #1
+augment_batch = True
 
 # Augmentation settings
 do_rotation_range = False   #random rotation in range "rg" (min,max)
