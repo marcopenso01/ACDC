@@ -87,28 +87,6 @@ def run_training(continue_run):
     logging.info(' - Labels:')
     logging.info(labels_train.shape)
     logging.info(labels_train.dtype)
-        
-    #pre-process
-    for image in images_train:
-        if config.standardize:
-            image = image_utils.standardize_image(image)
-        if config.normalize:
-            image = image_utils.normalize_image(image)
-        if config.equalize:
-            image = image_utils.equalization_image(image)
-        if config.clahe:
-            image = image_utils.CLAHE(image)
-            
-    for image in images_val:
-        if config.standardize:
-            image = image_utils.standardize_image(image)
-        if config.normalize:
-            image = image_utils.normalize_image(image)
-        if config.equalize:
-            image = image_utils.equalization_image(image)
-        if config.clahe:
-            image = image_utils.CLAHE(image)
-            
     
     if config.prob:   #if prob is not 0
         logging.info('Before data_augmentation the number of training images is:')
