@@ -236,7 +236,7 @@ def run_training(continue_run):
 
             for batch in iterate_minibatches(images_train,
                                              labels_train,
-                                             batch_size=config.batch_size
+                                             batch_size=config.batch_size,
                                              augment_batch=config.augment_batch):
 
                 if config.warmup_training:
