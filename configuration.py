@@ -34,17 +34,15 @@ beta = 0.2   #1
 augment_batch = True
 
 # Augmentation settings
-do_rotation_range = False   #random rotation in range "rg" (min,max)
-rg = (0,90)     
-do_rotation_90 = True      #rotation 90°
+do_rotation_range = True   #random rotation in range "rg" (min,max)
+rg = (0,359)     
+do_rotation_90 = False      #rotation 90°
 do_rotation_180 = False     #rotation 180°
 do_rotation_270 = False     #rotation 270°
 do_rotation_reshape = False #rotation of a specific 'angle' with reshape
 do_rotation = False         #rotation of a specific 'angle'
 angle = 45
-crop = False                #crops/cuts away pixels at the sides of the image
-offset = (11, 21)           #The number of pixels to crop away on each side of the image
-                            #crops EACH side by a random value from the range (min,max) pixel
+crop = True                #crops/cuts away pixels at the sides of the image
 do_fliplr = True           #Flip array in the left/right direction
 do_flipud = True           #Flip array in the up/down direction.
 RandomContrast= False       #Random change contrast of an image
