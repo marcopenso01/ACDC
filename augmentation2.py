@@ -23,6 +23,32 @@ import utils
 import image_utils
 import configuration as config
 
+def zoom(img, zoom_factor):
+    
+    height, width = img.shape[:2] # It's also the final desired shape
+    new_height, new_width = int(height * zoom_factor), int(width * zoom_factor)
+
+    ### Crop only the part that will remain in the result (more efficient)
+    # Centered bbox of the final desired size in resized (larger/smaller) image coordinates
+    y1, x1 = max(0, new_height - height) // 2, max(0, new_width - width) // 2
+    y2, x2 = y1 + height, x1 + width
+    bbox = np.array([y1,x1,y2,x2])
+    # Map back to original image coordinates
+    bbox = (bbox / zoom_factor).astype(np.int)
+    y1, x1, y2, x2 = bbox
+    cropped_img = img[y1:y2, x1:x2]
+
+    # Handle padding when downscaling
+    resize_height, resize_width = min(new_height, height), min(new_width, width)
+    pad_height1, pad_width1 = (height - resize_height) // 2, (width - resize_width) //2
+    pad_height2, pad_width2 = (height - resize_height) - pad_height1, (width - resize_width) - pad_width1
+    pad_spec = [(pad_height1, pad_height2), (pad_width1, pad_width2)] + [(0,0)] * (img.ndim - 2)
+
+    result = cv2.resize(cropped_img, (resize_width, resize_height))
+    result = np.pad(result, pad_spec, mode='constant')
+    assert result.shape[0] == height and result.shape[1] == width
+    return result
+
 def augmentation_function(images, labels):
     '''
     :param images: A numpy array of shape [batch, X, Y], normalized between 0-1
@@ -30,9 +56,10 @@ def augmentation_function(images, labels):
     ''' 
     
     # Define in configuration.py which operations to perform
-    do_rotation_90 = config.do_rotation_90
+    do_rotation_range = config.do_rotation_range
     do_fliplr = config.do_fliplr
     do_flipud = config.do_flipud
+    crop = config.crop
     
     # Probability to perform a generic operation
     prob = config.prob
@@ -48,122 +75,53 @@ def augmentation_function(images, labels):
             img = np.squeeze(images[i,...])
             lbl = np.squeeze(labels[i,...])
             
-            # ROTATE
-            # rotate an image 90°
-            if do_rotation_90:
+            # RANDOM ROTATION
+            if do_rotation_range:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    angle = 90
-                    imgg = image_utils.rotate_image(img, angle)
-                    lbll = image_utils.rotate_image(lbl, angle, interp=cv2.INTER_NEAREST)
-                    if (random.randint(0,1)):
-                        x = random.randint(-11,11)
-                        y = random.randint(-11,11)
-                        M = np.float32([[1,0,x],[0,1,y]])
-                        imgg = cv2.warpAffine(imgg,M,(212,212))
-                        lbll = cv2.warpAffine(lbll,M,(212,212))
-                    new_images.append(imgg[...])
-                    new_labels.append(lbll[...])
-
-            # FLIP Lelf/Right (+ rotation)
+                    angle = config.rg
+                    random_angle = np.random.uniform(angle[0], angle[1])
+                    img = image_utils.rotate_image(img, random_angle)
+                    lbl = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
+                    
+                    
+            # FLIP Lelf/Right
             if do_fliplr:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    imgg = np.fliplr(img)
-                    lbll = np.fliplr(lbl)
-                    new_images.append(imgg[...])
-                    new_labels.append(lbll[...])
-                    # rotation
-                    angle = 90
-                    imgg = image_utils.rotate_image(imgg, angle)
-                    lbll = image_utils.rotate_image(lbll, angle, interp=cv2.INTER_NEAREST)
-                    if (random.randint(0,1)):
-                        x = random.randint(-11,11)
-                        y = random.randint(-11,11)
-                        M = np.float32([[1,0,x],[0,1,y]])
-                        imgg = cv2.warpAffine(imgg,M,(212,212))
-                        lbll = cv2.warpAffine(lbll,M,(212,212))
-                    new_images.append(imgg[...])
-                    new_labels.append(lbll[...])
+                    img = np.fliplr(img)
+                    lbl = np.fliplr(lbl)
+     
                 
-            # FLIP  up/down (+ rotation)
+            # FLIP  up/down
             if do_flipud:
                 coin_flip = np.random.uniform(low=0.0, high=1.0)
                 if coin_flip < prob :
-                    imgg = np.flipud(img)
-                    lbll = np.flipud(lbl)
-                    new_images.append(imgg[...])
-                    new_labels.append(lbll[...])
-                    # rotation
-                    angle = 90
-                    imgg = image_utils.rotate_image(imgg, angle)
-                    lbll = image_utils.rotate_image(lbll, angle, interp=cv2.INTER_NEAREST)
-                    if (random.randint(0,1)):
+                    img = np.flipud(img)
+                    lbl = np.flipud(lbl)
+                    
+                    
+            # RANDOM TRANSLATION 5%
+            if (random.randint(0,1)):
                         x = random.randint(-11,11)
                         y = random.randint(-11,11)
                         M = np.float32([[1,0,x],[0,1,y]])
-                        imgg = cv2.warpAffine(imgg,M,(212,212))
-                        lbll = cv2.warpAffine(lbll,M,(212,212))
-                    new_images.append(imgg[...])
-                    new_labels.append(lbll[...])
-                    
+                        img = cv2.warpAffine(img,M,(212,212))
+                        lbl = cv2.warpAffine(lbl,M,(212,212))
+                        
+                       
+            # RANDOM CROP 5%
+            if crop:
+                coin_flip = np.random.uniform(low=0.0, high=1.0)
+                if coin_flip < prob :
+                    zfactor = round(random.uniform(1,1.05), 2)
+                    img = zoom(img, zfactor)
+                    lbl = zoom(lbl, zfactor)
             
-            # FLIP up/down + FLIP felft/right (+ rotation)
-            coin_flip = np.random.uniform(low=0.0, high=1.0)
-            if coin_flip < prob :
-                imgg = np.flipud(img)
-                lbll = np.flipud(lbl)
-                imgg = np.fliplr(imgg)
-                lbll = np.fliplr(lbll)
-                new_images.append(imgg[...])
-                new_labels.append(lbll[...])
-                angle = 90
-                imgg = image_utils.rotate_image(imgg, angle)
-                lbll = image_utils.rotate_image(lbll, angle, interp=cv2.INTER_NEAREST)
-                if (random.randint(0,1)):
-                    x = random.randint(-11,11)
-                    y = random.randint(-11,11)
-                    M = np.float32([[1,0,x],[0,1,y]])
-                    imgg = cv2.warpAffine(imgg,M,(212,212))
-                    lbll = cv2.warpAffine(lbll,M,(212,212))
-                new_images.append(imgg[...])
-                new_labels.append(lbll[...])
             
-            # RANDOM CROPPING
-  #          if crop:
-  #              coin_flip = np.random.uniform(low=0.0, high=1.0)
-  #              if coin_flip < prob :
-  #                  augmenters = [iaa.Crop(px=config.offset)]
-  #                  seq = iaa.Sequential(augmenters, random_order=True)
-  #                  imgg = seq.augment_image(img)
-  #                  lbll = seq.augment_image(lbl)
-  #                  if (random.randint(0,1)):
-  #                      x = random.randint(-11,11)
-  #                      y = random.randint(-11,11)
-  #                      M = np.float32([[1,0,x],[0,1,y]])
-  #                      imgg = cv2.warpAffine(imgg,M,(212,212))
-  #                      lbll = cv2.warpAffine(lbll,M,(212,212))
-  #                  new_images.append(imgg[...])
-  #                  new_labels.append(lbll[...])
-
-            # ROTATION + CROP
-  #          random_angle = np.random.uniform(angles[0], angles[1])
-  #          imgg = image_utils.rotate_image(img, random_angle)
-  #          lbll = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
-  #          augmenters = [iaa.Crop(px=config.offset)]
-  #          seq = iaa.Sequential(augmenters, random_order=True)
-  #          imgg = seq.augment_image(imgg)
-  #          lbll = seq.augment_image(lbll)
-  #          if (random.randint(0,1)):
-  #              x = random.randint(-11,11)
-  #              y = random.randint(-11,11)
-  #              M = np.float32([[1,0,x],[0,1,y]])
-  #              imgg = cv2.warpAffine(imgg,M,(212,212))
-  #              lbll = cv2.warpAffine(lbll,M,(212,212))
-  #          new_images.append(imgg[...])
-  #          new_labels.append(lbll[...])
-            
-
+            new_images.append(img[..., np.newaxis])
+            new_labels.append(lbl[...])
+        
         sampled_image_batch = np.asarray(new_images)
         sampled_label_batch = np.asarray(new_labels)
 
