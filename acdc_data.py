@@ -185,14 +185,14 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             print(img.shape)   # [x,y,N]   x and y might be not equal, we need to resample
 
             #pre-process
-            if config.standardize:
-                img = image_utils.standardize_image(img)
-            if config.normalize:
-                img = image_utils.normalize_image(img)
-            if config.equalize:
-                img = image_utils.equalization_image(img)
-            if config.clahe:
-                img = image_utils.CLAHE(img)
+           # if config.standardize:
+           #     img = image_utils.standardize_image(img)
+           # if config.normalize:
+           #     img = image_utils.normalize_image(img)
+           # if config.equalize:
+           #     img = image_utils.equalization_image(img)
+           # if config.clahe:
+           #     img = image_utils.CLAHE(img)
 
             pixel_size = (img_dat[2].structarr['pixdim'][1],
                           img_dat[2].structarr['pixdim'][2],
