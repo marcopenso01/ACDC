@@ -88,6 +88,27 @@ def run_training(continue_run):
     logging.info(labels_train.shape)
     logging.info(labels_train.dtype)
     
+    #pre-process
+    for img in images_train:
+        if config.standardize:
+            img = image_utils.standardize_image(img)
+        if config.normalize:
+            img = image_utils.normalize_image(img)
+        if config.equalize:
+            img = image_utils.equalization_image(img)
+        if config.clahe:
+            img = image_utils.CLAHE(img)
+    if not train_on_all_data:
+        for img in images_val:
+            if config.standardize:
+                img = image_utils.standardize_image(img)
+            if config.normalize:
+                img = image_utils.normalize_image(img)
+            if config.equalize:
+                img = image_utils.equalization_image(img)
+            if config.clahe:
+                img = image_utils.CLAHE(img)
+    
  #   if config.prob:   #if prob is not 0
  #       logging.info('Before data_augmentation the number of training images is:')
  #       logging.info(images_train.shape[0])
