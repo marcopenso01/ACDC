@@ -28,7 +28,7 @@ warmup_training = True
 weight_decay = 0.00000   # enet: 0.0002
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
-loss_type = 'dice'
+loss_type = 'crossentropy'
 alfa = 1
 beta = 0.2   #1
 augment_batch = True
