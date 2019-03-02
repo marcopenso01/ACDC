@@ -64,11 +64,11 @@ offset2 = (10,30)           #number of pixels to crop away on each side of the i
 prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 
 # Paths settings (we need to mount MyDrive before)
-input_folder = '/content/drive/My Drive/ACDC_challenge/train'      #'D:\Network\ACDC_challenge\train'
-#input_folder = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'
-preprocessing_folder = '/content/drive/My Drive/preproc_data'      #'D:\Network\preproc_data'
-project_root = '/content/drive/My Drive'                           #'D:\Network'
-log_root = os.path.join(project_root, 'acdc_logdir')               #
+input_folder = 'D:\Network\ACDC_challenge\train'      # 'D:\Network\ACDC_challenge\train'       '/content/drive/My Drive/ACDC_challenge/train'
+#input_folder = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'   '/content/drive/My Drive/ACDC_challenge/test'
+preprocessing_folder = 'D:\Network\preproc_data'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
+project_root = 'D:\Network'                           #'D:\Network'      '/content/drive/My Drive'
+log_root = os.path.join(project_root, 'acdc_logdir')               
 
 # Pre-process settings
 standardize = True
