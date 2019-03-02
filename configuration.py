@@ -28,7 +28,7 @@ warmup_training = True
 weight_decay = 0.00000   # enet: 0.0002
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
-loss_type = 'crossentropy'
+loss_type = 'dice'
 alfa = 1
 beta = 0.2   #1
 augment_batch = True
@@ -78,9 +78,9 @@ clahe = False
 
 # Rarely changed settings
 use_data_fraction = False  # Should normally be False
-max_epochs = 150
+max_epochs = 51
 schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve is smaller than this value the LR will
                                        # be reduced
 
 train_eval_frequency = 200
-val_eval_frequency = 150
+val_eval_frequency = 200
