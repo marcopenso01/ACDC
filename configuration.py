@@ -21,7 +21,7 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 10
-learning_rate = 0.0002   #unet: 0.01    enet: 0.0005
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
@@ -42,7 +42,7 @@ do_rotation_270 = False     #rotation 270°
 do_rotation_reshape = False #rotation of a specific 'angle' with reshape
 do_rotation = False         #rotation of a specific 'angle'
 angle = 45
-crop = True                #crops/cuts away pixels at the sides of the image
+crop = False                #crops/cuts away pixels at the sides of the image
 do_fliplr = True           #Flip array in the left/right direction
 do_flipud = True           #Flip array in the up/down direction.
 RandomContrast= False       #Random change contrast of an image
@@ -78,9 +78,9 @@ clahe = False
 
 # Rarely changed settings
 use_data_fraction = False  # Should normally be False
-max_epochs = 100
+max_epochs = 200
 schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve is smaller than this value the LR will
                                        # be reduced
 
 train_eval_frequency = 200
-val_eval_frequency = 200
+val_eval_frequency = 150
