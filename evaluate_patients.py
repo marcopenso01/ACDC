@@ -21,16 +21,18 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 sys_config.setup_GPU_environment()
 
 
-def score_data(input_folder, output_folder, model_path, exp_config, do_postprocessing=False, gt_exists=True, evaluate_all=False, use_iter=None):
+def score_data(input_folder, output_folder, model_path, config, do_postprocessing=False, gt_exists=True, evaluate_all=False, use_iter=None):
 
-    nx, ny = exp_config.image_size[:2]
+    nx, ny = config.image_size[:2]
     batch_size = 1
-    num_channels = exp_config.nlabels
+    num_channels = config.nlabels
 
-    image_tensor_shape = [batch_size] + list(exp_config.image_size) + [1]
+    image_tensor_shape = [batch_size] + list(config.image_size) + [1]
     images_pl = tf.placeholder(tf.float32, shape=image_tensor_shape, name='images')
 
-    mask_pl, softmax_pl = model.predict(images_pl, exp_config)
+    # According to the experiment config, pick a model and predict the output
+    # TODO: Implement majority voting using 3 models.
+    mask_pl, softmax_pl = model.predict(images_pl, config)
     saver = tf.train.Saver()
     init = tf.global_variables_initializer()
 
@@ -95,11 +97,11 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
 
                         start_time = time.time()
 
-                        if exp_config.data_mode == '2D':
+                        if config.data_mode == '2D':
 
                             pixel_size = (img_dat[2].structarr['pixdim'][1], img_dat[2].structarr['pixdim'][2])
-                            scale_vector = (pixel_size[0] / exp_config.target_resolution[0],
-                                            pixel_size[1] / exp_config.target_resolution[1])
+                            scale_vector = (pixel_size[0] / config.target_resolution[0],
+                                            pixel_size[1] / config.target_resolution[1])
 
                             predictions = []
 
@@ -111,6 +113,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                                                                    order=1,
                                                                    preserve_range=True,
                                                                    multichannel=False,
+                                                                   anti_aliasing=True,
                                                                    mode='constant')
 
                                 x, y = slice_rescaled.shape
@@ -157,6 +160,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                                                                   (mask.shape[0], mask.shape[1], num_channels),
                                                                   order=1,
                                                                   preserve_range=True,
+                                                                  anti_aliasing=True,
                                                                   mode='constant')
                                 else:  # This can occasionally lead to wrong volume size, therefore if gt_exists
                                        # we use the gt mask size for resizing.
@@ -165,6 +169,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                                                                    order=1,
                                                                    preserve_range=True,
                                                                    multichannel=False,
+                                                                   anti_aliasing=True,
                                                                    mode='constant')
 
                                 # prediction = transform.resize(slice_predictions,
@@ -179,15 +184,15 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
 
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
 
-                        elif exp_config.data_mode == '3D':
+                        elif config.data_mode == '3D':
 
 
                             pixel_size = (img_dat[2].structarr['pixdim'][1], img_dat[2].structarr['pixdim'][2],
                                           img_dat[2].structarr['pixdim'][3])
 
-                            scale_vector = (pixel_size[0] / exp_config.target_resolution[0],
-                                            pixel_size[1] / exp_config.target_resolution[1],
-                                            pixel_size[2] / exp_config.target_resolution[2])
+                            scale_vector = (pixel_size[0] / config.target_resolution[0],
+                                            pixel_size[1] / config.target_resolution[1],
+                                            pixel_size[2] / config.target_resolution[2])
 
                             vol_scaled = transform.rescale(img,
                                                            scale_vector,
@@ -196,7 +201,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                                                            multichannel=False,
                                                            mode='constant')
 
-                            nz_max = exp_config.image_size[2]
+                            nz_max = config.image_size[2]
                             slice_vol = np.zeros((nx, ny, nz_max), dtype=np.float32)
 
                             nz_curr = vol_scaled.shape[2]
@@ -347,23 +352,23 @@ if __name__ == '__main__':
     if use_iter:
         logging.info('Using iteration: %d' % use_iter)
 
-    base_path = sys_config.project_root
+    base_path = config.project_root
     model_path = os.path.join(base_path, args.EXP_PATH)
     config_file = glob.glob(model_path + '/*py')[0]
     config_module = config_file.split('/')[-1].rstrip('.py')
-    exp_config = SourceFileLoader(config_module, os.path.join(config_file)).load_module()
+    exp_config = SourceFileLoader(fullname=config_module, path=os.path.join(config_file)).load_module()
 
     if evaluate_test_set:
         logging.warning('EVALUATING ON TEST SET')
-        input_path = sys_config.test_data_root
+        input_path = config.test_data_root
         output_path = os.path.join(model_path, 'predictions_testset')
     elif evaluate_all:
         logging.warning('EVALUATING ON ALL TRAINING DATA')
-        input_path = sys_config.data_root
+        input_path = config.data_root
         output_path = os.path.join(model_path, 'predictions_alltrain')
     else:
         logging.warning('EVALUATING ON VALIDATION SET')
-        input_path = sys_config.data_root
+        input_path = config.data_root
         output_path = os.path.join(model_path, 'predictions')
 
 
@@ -384,7 +389,7 @@ if __name__ == '__main__':
     init_iteration = score_data(input_path,
                                 output_path,
                                 model_path,
-                                exp_config=exp_config,
+                                config=config,
                                 do_postprocessing=True,
                                 gt_exists=(not evaluate_test_set),
                                 evaluate_all=evaluate_all,
