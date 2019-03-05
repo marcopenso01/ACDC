@@ -20,7 +20,7 @@ split_test_train = True   #divide data in train (80%) and test (20%)
 train_on_all_data = False 
 
 # Training settings
-batch_size = 10
+batch_size = 5
 learning_rate = 0.01   #unet: 0.01    enet: 0.0005
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
