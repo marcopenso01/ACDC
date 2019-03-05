@@ -1,4 +1,4 @@
-import os
+import os.path
 from glob import glob
 import time
 import re
