@@ -17,9 +17,6 @@ import image_utils
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
-# Set SGE_GPU environment variable if we are not on the local host
-sys_config.setup_GPU_environment()
-
 
 def score_data(input_folder, output_folder, model_path, config, do_postprocessing=False, gt_exists=True, evaluate_all=False, use_iter=None):
 
