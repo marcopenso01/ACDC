@@ -60,7 +60,7 @@ def unet2D(images, training, nlabels):
     return pred
 
 
-
+@slim.add_arg_scope
 def prelu(x, scope, decoder=False):
     '''
     Performs the parametric relu operation. This implementation is based on:
