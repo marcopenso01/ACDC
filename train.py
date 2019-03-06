@@ -24,8 +24,6 @@ import augmentation2 as aug
 from background_generator import BackgroundGenerator
 import model_structure as model_structure
 
-slim = tf.contrib.slim
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 log_dir = os.path.join(config.log_root, config.experiment_name)
