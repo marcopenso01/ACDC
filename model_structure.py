@@ -365,7 +365,7 @@ def bottleneck(inputs,
             output_shape = [net_unpool_shape[0], net_unpool_shape[1], net_unpool_shape[2], reduced_depth]
             output_shape = tf.convert_to_tensor(output_shape)
             filter_size = [filter_size, filter_size, reduced_depth, reduced_depth]
-            filters = tf.get_variable(shape=filter_size, initializer=initializers.xavier_initializer(), dtype=tf.float32, name=scope+'_transposed_conv2_filters')
+            filters = tf.get_variable(shape=filter_size, initializer=config.iniz, dtype=tf.float32, name=scope+'_transposed_conv2_filters')
 
             # net = slim.conv2d_transpose(net, reduced_depth, [filter_size, filter_size], stride=2, scope=scope+'_transposed_conv2')
             net = tf.nn.conv2d_transpose(net, filter=filters, strides=[1,2,2,1], output_shape=output_shape, name=scope+'_transposed_conv2')
