@@ -7,7 +7,7 @@ slim = tf.contrib.slim
 
 def unet2D(images, training, nlabels):
     
-    images_padded = tf.pad(images, [[0,0], [90, 90], [90, 90], [0,0]], 'CONSTANT')     #92 with 212x212
+    images_padded = tf.pad(images, [[0,0], [91, 91], [91, 91], [0,0]], 'CONSTANT')     #92 with 212x212
 
     conv1_1 = layers.conv2D_layer_bn(images_padded, 'conv1_1', num_filters=64, training=training, padding='VALID')
     conv1_2 = layers.conv2D_layer_bn(conv1_1, 'conv1_2', num_filters=64, training=training, padding='VALID')
