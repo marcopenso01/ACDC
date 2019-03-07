@@ -52,7 +52,7 @@ def loss(logits, labels, nlabels, loss_type, weight_decay=0.0):
     return total_loss, segmentation_loss, weights_norm
 
 
-def predict(images, exp_config):
+def predict(images, config):
     '''
     Returns the prediction for an image given a network from the model zoo
     :param images: An input image tensor
