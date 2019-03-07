@@ -107,11 +107,11 @@ def spatial_dropout(x, p, seed, scope, is_training=True):
                       with certain layers having their elements all set to 0 (i.e. dropped).
     '''
     if is_training:
-        # keep_prob = 1.0 - p
-        rate = p
+        keep_prob = 1.0 - p
+        rate = 1 - keep_prob
         input_shape = x.get_shape().as_list()
         noise_shape = tf.constant(value=[input_shape[0], 1, 1, input_shape[3]])
-        output = tf.nn.dropout(x, rate, noise_shape, seed=seed, name=scope)
+        output = tf.nn.dropout(x, noise_shape, seed=seed, name=scope, rate)
 
         return output
 
