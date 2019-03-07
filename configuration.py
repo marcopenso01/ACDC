@@ -11,6 +11,12 @@ experiment_name = 'enet'
 model_handle = model_structure.unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 
+# Model settings Enet
+xa_un = tensorflow.contrib.layers.xavier_initializer(uniform=True)
+xa_no = tensorflow.contrib.layers.xavier_initializer(uniform=False)
+he_no = tensorflow.contrib.layers.variance_scaling_initializer(uniform=False)
+he_un = tensorflow.contrib.layers.variance_scaling_initializer(uniform=True)
+
 # Data settings
 data_mode = '2D'  # 2D or 3D
 image_size = (216, 216)   #(212,212)
