@@ -462,11 +462,11 @@ def ENet(inputs,
                 net_one = net
 
             #===================STAGE ONE=======================
-            net, pooling_indices_1, inputs_shape_1 = bottleneck(net, output_depth=64, filter_size=3, regularizer_prob=0.01, downsampling=True, scope='bottleneck1_0')
-            net = bottleneck(net, output_depth=64, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_1')
-            net = bottleneck(net, output_depth=64, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_2')
-            net = bottleneck(net, output_depth=64, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_3')
-            net = bottleneck(net, output_depth=64, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_4')
+            net, pooling_indices_1, inputs_shape_1 = bottleneck(net, output_depth=56, filter_size=3, regularizer_prob=0.01, downsampling=True, scope='bottleneck1_0')
+            net = bottleneck(net, output_depth=56, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_1')
+            net = bottleneck(net, output_depth=56, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_2')
+            net = bottleneck(net, output_depth=56, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_3')
+            net = bottleneck(net, output_depth=56, filter_size=3, regularizer_prob=0.01, scope='bottleneck1_4')
 
             #Save for skip connection later
             if skip_connections:
@@ -474,45 +474,45 @@ def ENet(inputs,
 
             #regularization prob is 0.1 from bottleneck 2.0 onwards
             with slim.arg_scope([bottleneck], regularizer_prob=0.1):
-                net, pooling_indices_2, inputs_shape_2 = bottleneck(net, output_depth=128, filter_size=3, downsampling=True, scope='bottleneck2_0')
+                net, pooling_indices_2, inputs_shape_2 = bottleneck(net, output_depth=112, filter_size=3, downsampling=True, scope='bottleneck2_0')
                 
                 #Repeat the stage two at least twice to get stage 2 and 3:
                 for i in range(2, max(stage_two_repeat, 2) + 2):
-                    net = bottleneck(net, output_depth=128, filter_size=3, scope='bottleneck'+str(i)+'_1')
-                    net = bottleneck(net, output_depth=128, filter_size=3, dilated=True, dilation_rate=2, scope='bottleneck'+str(i)+'_2')
-                    net = bottleneck(net, output_depth=128, filter_size=5, asymmetric=True, scope='bottleneck'+str(i)+'_3')
-                    net = bottleneck(net, output_depth=128, filter_size=3, dilated=True, dilation_rate=4, scope='bottleneck'+str(i)+'_4')
-                    net = bottleneck(net, output_depth=128, filter_size=3, scope='bottleneck'+str(i)+'_5')
-                    net = bottleneck(net, output_depth=128, filter_size=3, dilated=True, dilation_rate=8, scope='bottleneck'+str(i)+'_6')
-                    net = bottleneck(net, output_depth=128, filter_size=5, asymmetric=True, scope='bottleneck'+str(i)+'_7')
-                    net = bottleneck(net, output_depth=128, filter_size=3, dilated=True, dilation_rate=16, scope='bottleneck'+str(i)+'_8')
+                    net = bottleneck(net, output_depth=112, filter_size=3, scope='bottleneck'+str(i)+'_1')
+                    net = bottleneck(net, output_depth=112, filter_size=3, dilated=True, dilation_rate=2, scope='bottleneck'+str(i)+'_2')
+                    net = bottleneck(net, output_depth=112, filter_size=5, asymmetric=True, scope='bottleneck'+str(i)+'_3')
+                    net = bottleneck(net, output_depth=112, filter_size=3, dilated=True, dilation_rate=4, scope='bottleneck'+str(i)+'_4')
+                    net = bottleneck(net, output_depth=112, filter_size=3, scope='bottleneck'+str(i)+'_5')
+                    net = bottleneck(net, output_depth=112, filter_size=3, dilated=True, dilation_rate=8, scope='bottleneck'+str(i)+'_6')
+                    net = bottleneck(net, output_depth=112, filter_size=5, asymmetric=True, scope='bottleneck'+str(i)+'_7')
+                    net = bottleneck(net, output_depth=112, filter_size=3, dilated=True, dilation_rate=16, scope='bottleneck'+str(i)+'_8')
 
             with slim.arg_scope([bottleneck], regularizer_prob=0.1, decoder=True):
                 #===================STAGE FOUR========================
                 bottleneck_scope_name = "bottleneck" + str(i + 1)
 
                 #The decoder section, so start to upsample.
-                net = bottleneck(net, output_depth=64, filter_size=3, upsampling=True,
+                net = bottleneck(net, output_depth=56, filter_size=3, upsampling=True,
                                  pooling_indices=pooling_indices_2, output_shape=inputs_shape_2, scope=bottleneck_scope_name+'_0')
 
                 #Perform skip connections here
                 if skip_connections:
                     net = tf.add(net, net_two, name=bottleneck_scope_name+'_skip_connection')
 
-                net = bottleneck(net, output_depth=64, filter_size=3, scope=bottleneck_scope_name+'_1')
-                net = bottleneck(net, output_depth=64, filter_size=3, scope=bottleneck_scope_name+'_2')
+                net = bottleneck(net, output_depth=56, filter_size=3, scope=bottleneck_scope_name+'_1')
+                net = bottleneck(net, output_depth=56, filter_size=3, scope=bottleneck_scope_name+'_2')
 
                 #===================STAGE FIVE========================
                 bottleneck_scope_name = "bottleneck" + str(i + 2)
 
-                net = bottleneck(net, output_depth=16, filter_size=3, upsampling=True,
+                net = bottleneck(net, output_depth=14, filter_size=3, upsampling=True,
                                  pooling_indices=pooling_indices_1, output_shape=inputs_shape_1, scope=bottleneck_scope_name+'_0')
 
                 #perform skip connections here
                 if skip_connections:
                     net = tf.add(net, net_one, name=bottleneck_scope_name+'_skip_connection')
 
-                net = bottleneck(net, output_depth=16, filter_size=3, scope=bottleneck_scope_name+'_1')
+                net = bottleneck(net, output_depth=14, filter_size=3, scope=bottleneck_scope_name+'_1')
 
             #=============FINAL CONVOLUTION=============
             pred = slim.conv2d_transpose(net, num_classes, [2,2], stride=2, scope='fullconv')
