@@ -12,10 +12,10 @@ model_handle = model_structure.unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 
 # Model settings Enet
-iniz = tensorflow.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
-# iniz = tensorflow.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
-# iniz = tensorflow.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
-# iniz = tensorflow.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
+iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
+# iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
+# iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
+# iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
