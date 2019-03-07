@@ -4,8 +4,8 @@ import os
 import socket
 import logging
 
-# experiment_name = 'unet2D'
-experiment_name = 'enet'
+experiment_name = 'unet2D'
+# experiment_name = 'enet'
 
 # Model settings Unet2D
 model_handle = model_structure.unet2D
