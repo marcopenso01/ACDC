@@ -165,6 +165,8 @@ def run_training(continue_run):
         
         logging.info('images_pl shape')
         logging.info(images_pl.shape)
+        logging.info('labels_pl shape')
+        logging.info(labels_pl.shape)
         logging.info('logits shape:')
         logging.info(logits.shape)
         # Add to the Graph the Ops for loss calculation.
