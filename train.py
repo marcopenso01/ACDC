@@ -163,7 +163,7 @@ def run_training(continue_run):
         else:
             logging.warning('invalid experiment_name!')    
         
-
+        logging.info(logits.shape)
         # Add to the Graph the Ops for loss calculation.
         [loss, _, weights_norm] = model.loss(logits,
                                              labels_pl,
