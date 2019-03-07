@@ -129,20 +129,20 @@ def unpool(updates, mask, k_size=[1, 2, 2, 1], output_shape=None, scope=''):
     - ret(Tensor): the returned 4D tensor that has the shape of output_shape.
     '''
     with tf.variable_scope(scope):
-        mask = tf.cast(mask, tf.float32)
-        input_shape = tf.shape(updates, out_type=tf.float32)
+        mask = tf.cast(mask, tf.int32)
+        input_shape = tf.shape(updates, out_type=tf.int32)
         #  calculation new shape
         if output_shape is None:
             output_shape = (input_shape[0], input_shape[1] * ksize[1], input_shape[2] * ksize[2], input_shape[3])
 
         # calculation indices for batch, height, width and feature maps
-        one_like_mask = tf.ones_like(mask, dtype=tf.float32)
+        one_like_mask = tf.ones_like(mask, dtype=tf.int32)
         batch_shape = tf.concat([[input_shape[0]], [1], [1], [1]], 0)
-        batch_range = tf.reshape(tf.range(output_shape[0], dtype=tf.float32), shape=batch_shape)
+        batch_range = tf.reshape(tf.range(output_shape[0], dtype=tf.int32), shape=batch_shape)
         b = one_like_mask * batch_range
         y = mask // (output_shape[2] * output_shape[3])
         x = (mask // output_shape[3]) % output_shape[2] #mask % (output_shape[2] * output_shape[3]) // output_shape[3]
-        feature_range = tf.range(output_shape[3], dtype=tf.float32)
+        feature_range = tf.range(output_shape[3], dtype=tf.int32)
         f = one_like_mask * feature_range
 
         # transpose indices & reshape update values to one dimension
