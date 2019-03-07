@@ -107,10 +107,10 @@ def spatial_dropout(x, p, seed, scope, is_training=True):
                       with certain layers having their elements all set to 0 (i.e. dropped).
     '''
     if is_training:
-        keep_prob = 1.0 - p
+        # keep_prob = 1.0 - p
         input_shape = x.get_shape().as_list()
         noise_shape = tf.constant(value=[input_shape[0], 1, 1, input_shape[3]])
-        output = tf.nn.dropout(x, rate = 1 - keep_prob, noise_shape, seed=seed, name=scope)
+        output = tf.nn.dropout(x, rate=p, noise_shape, seed=seed, name=scope)
 
         return output
 
@@ -156,13 +156,13 @@ def unpool(updates, mask, k_size=[1, 2, 2, 1], output_shape=None, scope=''):
 def initial_block(inputs, is_training=True, scope='initial_block'):
     '''
     The initial block for Enet has 2 branches: The convolution branch and Maxpool branch.
-    The conv branch has 13 layers, while the maxpool branch gives 3 layers corresponding to the RGB channels.
-    Both output layers are then concatenated to give an output of 16 layers.
+    The conv branch has 13 layers, while the maxpool branch gives 1 layers corresponding to the grayscale channels.
+    Both output layers are then concatenated to give an output of 14 layers.
     NOTE: Does not need to store pooling indices since it won't be used later for the final upsampling.
     INPUTS:
     - inputs(Tensor): A 4D tensor of shape [batch_size, height, width, channels]
     OUTPUTS:
-    - net_concatenated(Tensor): a 4D Tensor that contains the 
+    - net_concatenated(Tensor): a 4D Tensor 
     '''
     #Convolutional branch
     net_conv = slim.conv2d(inputs, 13, [3,3], stride=2, activation_fn=None, scope=scope+'_conv')
