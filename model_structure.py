@@ -1,7 +1,9 @@
 import tensorflow as tf
+import configuration as config
 from tfwrapper import layers
 from tensorflow.contrib.layers.python.layers import initializers
 slim = tf.contrib.slim
+
 
 def unet2D(images, training, nlabels):
     
