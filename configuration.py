@@ -19,7 +19,7 @@ iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (216, 216)   #(212,212)
+image_size = (212, 212)   #(216,216)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
