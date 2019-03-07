@@ -163,11 +163,8 @@ def run_training(continue_run):
         else:
             logging.warning('invalid experiment_name!')    
         
-        img = tf.train.batch(images_train, batch_size=5, allow_smaller_final_batch=True)
         logging.info('images_pl shape')
         logging.info(images_pl.shape)
-        logging.info('img shape')
-        logging.info(img.shape)
         logging.info('logits shape:')
         logging.info(logits.shape)
         # Add to the Graph the Ops for loss calculation.
