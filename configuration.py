@@ -5,6 +5,7 @@ import socket
 import logging
 
 experiment_name = 'unet2D'
+# experiment_name = 'unet2D_short'
 # experiment_name = 'enet'
 
 # Model settings Unet2D
