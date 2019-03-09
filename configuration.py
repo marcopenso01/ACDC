@@ -4,9 +4,9 @@ import os
 import socket
 import logging
 
-# experiment_name = 'unet2D'
+experiment_name = 'unet2D'
 # experiment_name = 'unet2D_short'
-experiment_name = 'enet'
+# experiment_name = 'enet'
 
 # Model settings Unet2D
 model_handle = model_structure.unet2D
@@ -20,7 +20,7 @@ iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (216, 216)   #(212,212)
+image_size = (212, 212)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
@@ -28,7 +28,7 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 5
-learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
