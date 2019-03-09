@@ -4,23 +4,23 @@ import os
 import socket
 import logging
 
-experiment_name = 'unet2D'
+# experiment_name = 'unet2D'
 # experiment_name = 'unet2D_short'
-# experiment_name = 'enet'
+experiment_name = 'enet'
 
 # Model settings Unet2D
 model_handle = model_structure.unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 
 # Model settings Enet
-iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
+# iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
-# iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
+iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (212, 212)   #(216,216)
+image_size = (216, 216)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
@@ -28,14 +28,14 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 5
-learning_rate = 0.01   #unet: 0.01    enet: 0.0005
+learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
 weight_decay = 0.00000   # enet: 0.0002
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
-loss_type = 'crossentropy'
+loss_type = 'weighted_crossentropy'
 alfa = 1     #1      
 beta = 0.2   #1      
 augment_batch = True
