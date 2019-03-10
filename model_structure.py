@@ -5,7 +5,7 @@ from tensorflow.contrib.layers.python.layers import initializers
 slim = tf.contrib.slim
 
 
-def unet2D(images, training, nlabels):
+def unet2D_valid(images, training, nlabels):
     
     images_padded = tf.pad(images, [[0,0], [92, 92], [92, 92], [0,0]], 'CONSTANT')     #92 with 212x212
 
@@ -61,8 +61,8 @@ def unet2D(images, training, nlabels):
 
     return pred
 
-
-def unet2D_bn_padding_same(images, training, nlabels):
+#same
+def unet2D(images, training, nlabels):
 
     conv1_1 = layers.conv2D_layer_bn(images, 'conv1_1', num_filters=64, training=training)
     conv1_2 = layers.conv2D_layer_bn(conv1_1, 'conv1_2', num_filters=64, training=training)
@@ -88,7 +88,7 @@ def unet2D_bn_padding_same(images, training, nlabels):
     conv5_2 = layers.conv2D_layer_bn(conv5_1, 'conv5_2', num_filters=1024, training=training)
 
     upconv4 = layers.deconv2D_layer_bn(conv5_2, name='upconv4', kernel_size=(4, 4), strides=(2, 2), num_filters=512, training=training)
-    concat4 = tf.concat([conv4_2, upconv4], axis=3, name='concat4')
+    concat4 = layers.crop_and_concat_layer([conv4_2, upconv4], axis=3)
 
     conv6_1 = layers.conv2D_layer_bn(concat4, 'conv6_1', num_filters=512, training=training)
     conv6_2 = layers.conv2D_layer_bn(conv6_1, 'conv6_2', num_filters=512, training=training)
@@ -117,6 +117,7 @@ def unet2D_bn_padding_same(images, training, nlabels):
 
 
 
+#  -----  ENET  -----
 
 @slim.add_arg_scope
 def prelu(x, scope, decoder=False):
