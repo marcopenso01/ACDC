@@ -4,8 +4,8 @@ import os
 import socket
 import logging
 
-# experiment_name = 'Unet2D'
-experiment_name = 'unet2D_bn_padding_same'
+# experiment_name = 'unet2D_valid'
+# experiment_name = 'unet2D_same'
 # experiment_name = 'ENet'
 
 # Model settings Unet2D
