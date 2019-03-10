@@ -260,8 +260,6 @@ def run_training(continue_run):
         for epoch in range(config.max_epochs):
 
             logging.info('EPOCH %d' % epoch)
-            if (epoch + 1) % 30 == 0:
-                curr_lr /= 10.0
 
             for batch in iterate_minibatches(images_train,
                                              labels_train,
