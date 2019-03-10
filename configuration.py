@@ -29,9 +29,9 @@ split_test_train = True   #divide data in train (80%) and test (20%)
 train_on_all_data = False 
 
 # Training settings
-batch_size = 10
+batch_size = 8
 learning_rate = 0.01   #unet: 0.01    enet: 0.0005
-exponential_decay = False     #True Enet
+exponential_decay = True     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
@@ -52,7 +52,7 @@ do_rotation_270 = False     #rotation 270°
 do_rotation_reshape = False #rotation of a specific 'angle' with reshape
 do_rotation = False         #rotation of a specific 'angle'
 angle = 45
-crop = False                #crops/cuts away pixels at the sides of the image
+crop = True                #crops/cuts away pixels at the sides of the image
 do_fliplr = True           #Flip array in the left/right direction
 do_flipud = True           #Flip array in the up/down direction.
 RandomContrast= False       #Random change contrast of an image
