@@ -28,13 +28,13 @@ split_test_train = True   #divide data in train (80%) and test (20%)
 train_on_all_data = False 
 
 # Training settings
-batch_size = 5
+batch_size = 10
 learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
-exponential_decay = False     #True Enet
+exponential_decay = True     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
-weight_decay = 0.00000   # enet: 0.0002
+weight_decay = 2e-4   # enet:2e-4    #unet: 0.00000
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
