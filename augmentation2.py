@@ -102,12 +102,12 @@ def augmentation_function(images, labels):
                     
                     
             # RANDOM TRANSLATION 5%
-            if (random.randint(0,1)):
-                        x = random.randint(-11,11)
-                        y = random.randint(-11,11)
-                        M = np.float32([[1,0,x],[0,1,y]])
-                        img = cv2.warpAffine(img,M,(config.image_size[0],config.image_size[1]))
-                        lbl = cv2.warpAffine(lbl,M,(config.image_size[0],config.image_size[1]))
+         #   if (random.randint(0,1)):
+         #               x = random.randint(-11,11)
+         #               y = random.randint(-11,11)
+         #               M = np.float32([[1,0,x],[0,1,y]])
+         #               img = cv2.warpAffine(img,M,(config.image_size[0],config.image_size[1]))
+         #               lbl = cv2.warpAffine(lbl,M,(config.image_size[0],config.image_size[1]))
                         
                        
             # RANDOM CROP 5%
