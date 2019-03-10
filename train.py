@@ -159,7 +159,7 @@ def run_training(continue_run):
                                               reuse=None,
                                               num_initial_blocks=1,
                                               stage_two_repeat=2,
-                                              skip_connections=False)
+                                              skip_connections=config.skip_connections)
         else:
             logging.warning('invalid experiment_name!')    
         
