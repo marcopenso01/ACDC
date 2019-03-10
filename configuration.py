@@ -90,7 +90,7 @@ clahe = False
 
 # Rarely changed settings
 use_data_fraction = False  # Should normally be False
-max_epochs = 300
+max_epochs = 1000
 schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve is smaller than this value the LR will
                                        # be reduced
 
