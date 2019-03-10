@@ -10,8 +10,10 @@ import logging
 experiment_name = 'ENet'
 
 # Model settings Unet2D
-model_handle = model_structure.unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
+#model_handle = model_structure.unet2D_valid
+#model_handle = model_structure.unet2D_same
+model_handle = model_structure.unet2D_sameod
 
 # Model settings Enet
 # iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
