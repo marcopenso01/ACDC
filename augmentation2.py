@@ -112,8 +112,8 @@ def augmentation_function(images, labels):
                        
             # RANDOM CROP 5%
             if crop:
-                coin_flip = np.random.uniform(low=0.0, high=1.0)
-                if coin_flip < prob :
+                coin_flip = np.random.randint(2)
+                if coin_flip == 0:
                     zfactor = round(random.uniform(1,1.05), 2)
                     img = zoom(img, zfactor)
                     lbl = zoom(lbl, zfactor)
