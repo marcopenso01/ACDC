@@ -62,7 +62,7 @@ def unet2D_valid(images, training, nlabels):
     return pred
 
 #same
-def unet2D(images, training, nlabels):
+def unet2D_same(images, training, nlabels):
 
     conv1_1 = layers.conv2D_layer_bn(images, 'conv1_1', num_filters=64, training=training)
     conv1_2 = layers.conv2D_layer_bn(conv1_1, 'conv1_2', num_filters=64, training=training)
