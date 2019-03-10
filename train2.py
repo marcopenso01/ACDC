@@ -20,7 +20,7 @@ import image_utils
 import model as model
 import acdc_data
 import configuration as config
-import augmentation2 as aug
+import augmentation3 as aug
 from background_generator import BackgroundGenerator
 import model_structure as model_structure
 
@@ -111,25 +111,25 @@ def run_training(continue_run):
                 img = image_utils.normalize_image(img)
        
     
- #   if config.prob:   #if prob is not 0
- #       logging.info('Before data_augmentation the number of training images is:')
- #       logging.info(images_train.shape[0])
- #       #augmentation
- #       image_aug, label_aug = aug.augmentation_function(images_train,labels_train)
+    if config.prob:   #if prob is not 0
+        logging.info('Before data_augmentation the number of training images is:')
+        logging.info(images_train.shape[0])
+        #augmentation
+        image_aug, label_aug = aug.augmentation_function(images_train,labels_train)
     
         #num_aug = image_aug.shape[0]
         # id images augmented will be b'0.0'
         #id_aug = np.zeros([num_aug,]).astype('|S9')
         #concatenate
         #id_train = np.concatenate((id__train,id_aug))
- #       images_train = np.concatenate((images_train,image_aug))
- #       labels_train = np.concatenate((labels_train,label_aug))
+        images_train = np.concatenate((images_train,image_aug))
+        labels_train = np.concatenate((labels_train,label_aug))
     
- #       logging.info('After data_augmentation the number of training images is:')
- #       logging.info(images_train.shape[0])
- #   else:
- #       logging.info('No data_augmentation. Number of training images is:')
- #       logging.info(images_train.shape[0])
+        logging.info('After data_augmentation the number of training images is:')
+        logging.info(images_train.shape[0])
+    else:
+        logging.info('No data_augmentation. Number of training images is:')
+        logging.info(images_train.shape[0])
 
 
     # Tell TensorFlow that the model will be built into the default Graph.
@@ -260,18 +260,12 @@ def run_training(continue_run):
         for epoch in range(config.max_epochs):
 
             logging.info('EPOCH %d' % epoch)
-
+            if (epoch + 1) % 30 == 0:
+                curr_lr /= 10.0
 
             for batch in iterate_minibatches(images_train,
                                              labels_train,
-                                             batch_size=config.batch_size,
-                                             augment_batch=config.augment_batch):
-
-                if config.warmup_training:
-                    if step < 50:
-                        curr_lr = config.learning_rate / 10.0
-                    elif step == 50:
-                        curr_lr = config.learning_rate
+                                             batch_size=config.batch_size):
 
                 start_time = time.time()
 
@@ -304,88 +298,74 @@ def run_training(continue_run):
                     summary_str = sess.run(summary, feed_dict=feed_dict)
                     summary_writer.add_summary(summary_str, step)
                     summary_writer.flush()
-                
-                if (step + 1) % config.train_eval_frequency == 0:
-
-                    logging.info('Training Data Eval:')
-                    [train_loss, train_dice] = do_eval(sess,
-                                                       eval_loss,
-                                                       images_pl,
-                                                       labels_pl,
-                                                       training_pl,
-                                                       images_train,
-                                                       labels_train,
-                                                       config.batch_size)
-
-                    train_summary_msg = sess.run(train_summary, feed_dict={train_error_: train_loss,
-                                                                           train_dice_: train_dice}
-                                                 )
-                    summary_writer.add_summary(train_summary_msg, step)
-
-                    loss_history.append(train_loss)
-                    if len(loss_history) > 5:
-                        loss_history.pop(0)
-                        loss_gradient = (loss_history[-5] - loss_history[-1]) / 2
-
-                    logging.info('loss gradient is currently %f' % loss_gradient)
-
-                    if config.schedule_lr and loss_gradient < config.schedule_gradient_threshold:
-                        logging.warning('Reducing learning rate!')
-                        curr_lr /= 10.0
-                        logging.info('Learning rate changed to: %f' % curr_lr)
-
-                        # reset loss history to give the optimisation some time to start decreasing again
-                        loss_gradient = np.inf
-                        loss_history = []
-
-                    if train_loss <= last_train:  # best_train:
-                        no_improvement_counter = 0
-                        logging.info('Decrease in training error!')
-                    else:
-                        no_improvement_counter = no_improvement_counter+1
-                        logging.info('No improvment in training error for %d steps' % no_improvement_counter)
-
-                    last_train = train_loss
-
-                # Save a checkpoint and evaluate the model periodically.
-                if (step + 1) % config.val_eval_frequency == 0:
-
-                    checkpoint_file = os.path.join(log_dir, 'model.ckpt')
-                    saver.save(sess, checkpoint_file, global_step=step)
-                    # Evaluate against the training set.
-
-                    if not train_on_all_data:
-
-                        # Evaluate against the validation set.
-                        logging.info('Validation Data Eval:')
-                        [val_loss, val_dice] = do_eval(sess,
-                                                       eval_loss,
-                                                       images_pl,
-                                                       labels_pl,
-                                                       training_pl,
-                                                       images_val,
-                                                       labels_val,
-                                                       config.batch_size)
-
-                        val_summary_msg = sess.run(val_summary, feed_dict={val_error_: val_loss, val_dice_: val_dice}
-                        )
-                        summary_writer.add_summary(val_summary_msg, step)
-
-                        if val_dice > best_dice:
-                            best_dice = val_dice
-                            best_file = os.path.join(log_dir, 'model_best_dice.ckpt')
-                            saver_best_dice.save(sess, best_file, global_step=step)
-                            logging.info('Found new best dice on validation set! - %f -  Saving model_best_dice.ckpt' % val_dice)
-
-                        if val_loss < best_val:
-                            best_val = val_loss
-                            best_file = os.path.join(log_dir, 'model_best_xent.ckpt')
-                            saver_best_xent.save(sess, best_file, global_step=step)
-                            logging.info('Found new best crossentropy on validation set! - %f -  Saving model_best_xent.ckpt' % val_loss)
 
                 step += 1
                 
             # end epoch
+            logging.info('Training Data Eval:')
+            [train_loss, train_dice] = do_eval(sess,
+                                               eval_loss,
+                                               images_pl,
+                                               labels_pl,
+                                               training_pl,
+                                               images_train,
+                                               labels_train,
+                                               config.batch_size)
+
+            train_summary_msg = sess.run(train_summary, feed_dict={train_error_: train_loss,
+                                                                   train_dice_: train_dice}
+                                         )
+            summary_writer.add_summary(train_summary_msg, step)
+
+            loss_history.append(train_loss)
+            if len(loss_history) > 5:
+                loss_history.pop(0)
+                loss_gradient = (loss_history[-5] - loss_history[-1]) / 2
+
+            logging.info('loss gradient is currently %f' % loss_gradient)
+
+            if train_loss <= last_train:  # best_train:
+                no_improvement_counter = 0
+                logging.info('Decrease in training error!')
+            else:
+                no_improvement_counter = no_improvement_counter+1
+                logging.info('No improvment in training error for %d steps' % no_improvement_counter)
+
+            last_train = train_loss
+
+            # Save a checkpoint and evaluate the model periodically.
+            checkpoint_file = os.path.join(log_dir, 'model.ckpt')
+            saver.save(sess, checkpoint_file, global_step=step)
+            # Evaluate against the training set.
+
+            if not train_on_all_data:
+
+                # Evaluate against the validation set.
+                logging.info('Validation Data Eval:')
+                [val_loss, val_dice] = do_eval(sess,
+                                               eval_loss,
+                                               images_pl,
+                                               labels_pl,
+                                               training_pl,
+                                               images_val,
+                                               labels_val,
+                                               config.batch_size)
+
+                val_summary_msg = sess.run(val_summary, feed_dict={val_error_: val_loss, val_dice_: val_dice}
+                )
+                summary_writer.add_summary(val_summary_msg, step)
+
+                if val_dice > best_dice:
+                    best_dice = val_dice
+                    best_file = os.path.join(log_dir, 'model_best_dice.ckpt')
+                    saver_best_dice.save(sess, best_file, global_step=step)
+                    logging.info('Found new best dice on validation set! - %f -  Saving model_best_dice.ckpt' % val_dice)
+
+                if val_loss < best_val:
+                    best_val = val_loss
+                    best_file = os.path.join(log_dir, 'model_best_xent.ckpt')
+                    saver_best_xent.save(sess, best_file, global_step=step)
+                    logging.info('Found new best crossentropy on validation set! - %f -  Saving model_best_xent.ckpt' % val_loss)
         sess.close()
     data.close()
 
@@ -416,7 +396,7 @@ def do_eval(sess,
     dice_ii = 0
     num_batches = 0
 
-    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size, augment_batch=False)):  # No aug in evaluation
+    for batch in BackgroundGenerator(iterate_minibatches(images, labels, batch_size=batch_size)):  # No aug in evaluation
     # you can wrap the iterate_minibatches function in the BackgroundGenerator class for speed improvements
     # but at the risk of not catching exceptions
 
@@ -442,7 +422,7 @@ def do_eval(sess,
     return avg_loss, avg_dice
 
 
-def iterate_minibatches(images, labels, batch_size, augment_batch=False):
+def iterate_minibatches(images, labels, batch_size):
     '''
     Function to create mini batches from the dataset of a certain batch size 
     :param images: hdf5 dataset
@@ -470,11 +450,7 @@ def iterate_minibatches(images, labels, batch_size, augment_batch=False):
 
         image_tensor_shape = [X.shape[0]] + list(config.image_size) + [1]
         X = np.reshape(X, image_tensor_shape)
-        
-        if augment_batch:
-            X, y = aug.augmentation_function(X, y)
-
-            
+                   
         yield X, y
 
 
