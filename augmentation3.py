@@ -75,52 +75,49 @@ def augmentation_function(images, labels):
             img = np.squeeze(images[i,...])
             lbl = np.squeeze(labels[i,...])
             
-            # RANDOM ROTATION
-            if do_rotation_range:
-                coin_flip = np.random.uniform(low=0.0, high=1.0)
-                if coin_flip < prob :
+            for jj in range(8):
+                imgg = img
+                lbll = lbl
+                # RANDOM ROTATION
+                if do_rotation_range:
                     angle = config.rg
                     random_angle = np.random.uniform(angle[0], angle[1])
-                    img = image_utils.rotate_image(img, random_angle)
-                    lbl = image_utils.rotate_image(lbl, random_angle, interp=cv2.INTER_NEAREST)
+                    imgg = image_utils.rotate_image(imgg, random_angle)
+                    lbll = image_utils.rotate_image(lbll, random_angle, interp=cv2.INTER_NEAREST)   
                     
-                    
-            # FLIP Lelf/Right
-            if do_fliplr:
-                coin_flip = np.random.randint(2)
-                if coin_flip == 0:
-                    img = np.fliplr(img)
-                    lbl = np.fliplr(lbl)
-     
+                # FLIP Lelf/Right
+                if do_fliplr:
+                    coin_flip = np.random.randint(2)
+                    if coin_flip == 0:
+                        imgg = np.fliplr(imgg)
+                        lbll = np.fliplr(lbll)
                 
-            # FLIP  up/down
-            if do_flipud:
-                coin_flip = np.random.randint(2)
-                if coin_flip == 0:
-                    img = np.flipud(img)
-                    lbl = np.flipud(lbl)
-                    
-                    
-            # RANDOM TRANSLATION 5%
-         #   if (random.randint(0,1)):
-         #               x = random.randint(-11,11)
-         #               y = random.randint(-11,11)
-         #               M = np.float32([[1,0,x],[0,1,y]])
-         #               img = cv2.warpAffine(img,M,(config.image_size[0],config.image_size[1]))
-         #               lbl = cv2.warpAffine(lbl,M,(config.image_size[0],config.image_size[1]))
-                        
-                       
-            # RANDOM CROP 5%
-            if crop:
-                coin_flip = np.random.randint(2)
-                if coin_flip == 0:
-                    zfactor = round(random.uniform(1,1.05), 2)
-                    img = zoom(img, zfactor)
-                    lbl = zoom(lbl, zfactor)
+                # FLIP  up/down
+                if do_flipud:
+                    coin_flip = np.random.randint(2)
+                    if coin_flip == 0:
+                        imgg = np.flipud(imgg)
+                        lbll = np.flipud(lbll)
+
+                # RANDOM TRANSLATION 5%
+                if (random.randint(0,1)):
+                    x = random.randint(-11,11)
+                    y = random.randint(-11,11)
+                    M = np.float32([[1,0,x],[0,1,y]])
+                    imgg = cv2.warpAffine(imgg,M,(config.image_size[0],config.image_size[1]))
+                    lbll = cv2.warpAffine(lbll,M,(config.image_size[0],config.image_size[1]))
+
+                # RANDOM CROP 5%
+                if crop:
+                    coin_flip = np.random.randint(2)
+                    if coin_flip == 0:
+                        zfactor = round(random.uniform(1,1.05), 2)
+                        imgg = zoom(imgg, zfactor)
+                        lbll = zoom(lbll, zfactor)
+
             
-            
-            new_images.append(img[..., np.newaxis])
-            new_labels.append(lbl[...])
+                new_images.append(imgg[..., np.newaxis])
+                new_labels.append(lbll[...])
         
         sampled_image_batch = np.asarray(new_images)
         sampled_label_batch = np.asarray(new_labels)
