@@ -17,6 +17,7 @@ weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_unif
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
 iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
+skip_connections = False
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
