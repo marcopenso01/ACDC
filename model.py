@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tfwrapper import losses
 import configuration as config
+from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 
 import tensorflow.examples.tutorials.mnist
 
@@ -67,21 +68,32 @@ def predict(images, config):
     return mask, softmax
 
 
-def training_step(loss, optimizer_handle, learning_rate, **kwargs):
+def training_step(loss, optimizer_handle, lr, **kwargs):
     '''
     Creates the optimisation operation which is executed in each training iteration of the network
     :param loss: The loss to be minimised
     :param optimizer_handle: A handle to one of the tf optimisers 
-    :param learning_rate: Learning rate
+    :param lr: Learning rate
     :param momentum: Optionally, you can also pass a momentum term to the optimiser. 
     :return: The training operation
     '''
-
+    
+    if config.exponential_decay:
+        global_step = get_or_create_global_step()
+        num_epochs_before_decay = int(config.max_epochs/3)
+        num_steps_per_epoch = 1500/config.batch_size 
+        decay_steps = int(num_epochs_before_decay * num_steps_per_epoch)
+        lr = tf.train.exponential_decay(learning_rate = config.learning_rate,
+                                        global_step = global_step,
+                                        decay_steps = decay_steps,
+                                        decay_rate = 1e-1,
+                                        staircase = True)
+    
     if 'momentum' in kwargs:
         momentum = kwargs.get('momentum')
-        optimizer = optimizer_handle(learning_rate=learning_rate, momentum=momentum)
+        optimizer = optimizer_handle(learning_rate=lr, momentum=momentum)
     else:
-        optimizer = optimizer_handle(learning_rate=learning_rate)
+        optimizer = optimizer_handle(learning_rate=lr)
 
     # The with statement is needed to make sure the tf contrib version of batch norm properly performs its updates
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
