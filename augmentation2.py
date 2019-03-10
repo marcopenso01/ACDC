@@ -87,16 +87,16 @@ def augmentation_function(images, labels):
                     
             # FLIP Lelf/Right
             if do_fliplr:
-                coin_flip = np.random.uniform(low=0.0, high=1.0)
-                if coin_flip < prob :
+                coin_flip = np.random.randint(2)
+                if coin_flip == 0:
                     img = np.fliplr(img)
                     lbl = np.fliplr(lbl)
      
                 
             # FLIP  up/down
             if do_flipud:
-                coin_flip = np.random.uniform(low=0.0, high=1.0)
-                if coin_flip < prob :
+                coin_flip = np.random.randint(2)
+                if coin_flip == 0:
                     img = np.flipud(img)
                     lbl = np.flipud(lbl)
                     
@@ -106,8 +106,8 @@ def augmentation_function(images, labels):
                         x = random.randint(-11,11)
                         y = random.randint(-11,11)
                         M = np.float32([[1,0,x],[0,1,y]])
-                        img = cv2.warpAffine(img,M,(212,212))
-                        lbl = cv2.warpAffine(lbl,M,(212,212))
+                        img = cv2.warpAffine(img,M,(config.image_size[0],config.image_size[1]))
+                        lbl = cv2.warpAffine(lbl,M,(config.image_size[0],config.image_size[1]))
                         
                        
             # RANDOM CROP 5%
