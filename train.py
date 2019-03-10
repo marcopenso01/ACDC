@@ -148,9 +148,9 @@ def run_training(continue_run):
         tf.summary.scalar('learning_rate', learning_rate_pl)
 
         # Build a Graph that computes predictions from the inference model.
-        if config.experiment_name == 'unet2D':
+        if config.experiment_name == 'Unet2D':
             logits = model.inference(images_pl, config, training=training_pl)
-        elif config.experiment_name == 'enet':
+        elif config.experiment_name == 'ENet':
             with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
                 logits = model_structure.ENet(images_pl,
                                               num_classes=config.nlabels,
