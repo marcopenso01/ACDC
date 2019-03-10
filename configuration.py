@@ -5,8 +5,8 @@ import socket
 import logging
 
 # experiment_name = 'Unet2D'
-# experiment_name = 'Unet2D_short'
-experiment_name = 'ENet'
+experiment_name = 'unet2D_bn_padding_same'
+# experiment_name = 'ENet'
 
 # Model settings Unet2D
 model_handle = model_structure.unet2D
@@ -21,7 +21,7 @@ skip_connections = False
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (216, 216)   #(212,212)
+image_size = (212, 212)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
@@ -29,12 +29,12 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 10
-learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
-exponential_decay = True     #True Enet
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
+exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
-weight_decay = 2e-4   # enet:2e-4    #unet: 0.00000
+weight_decay = 0.00000   # enet:2e-4    #unet: 0.00000
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
