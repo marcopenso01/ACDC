@@ -1,7 +1,6 @@
 import tensorflow as tf
 from tfwrapper import losses
 import configuration as config
-from tensorflow.contrib.framework.python.ops.variables import get_or_create_global_step
 
 import tensorflow.examples.tutorials.mnist
 
@@ -79,7 +78,7 @@ def training_step(loss, optimizer_handle, lr, **kwargs):
     '''
     
     if config.exponential_decay:
-        global_step = get_or_create_global_step()
+        global_step = tf.train.get_or_create_global_step()
         num_epochs_before_decay = int(config.max_epochs/3)
         num_steps_per_epoch = 1500/config.batch_size 
         decay_steps = int(num_epochs_before_decay * num_steps_per_epoch)
