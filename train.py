@@ -386,6 +386,7 @@ def run_training(continue_run):
                 step += 1
                 
             # end epoch
+            logging.info('Learning rate' % curr_lr)
         sess.close()
     data.close()
 
