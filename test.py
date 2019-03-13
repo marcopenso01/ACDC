@@ -16,7 +16,7 @@ def main(exp_config):
 
     # Load data
     data = acdc_data.load_and_maybe_process_data(
-        input_folder=config.input_folder,
+        input_folder=config.data_root ,
         preprocessing_folder=config.preprocessing_folder,
         mode=config.data_mode,
         size=config.image_size,
@@ -29,7 +29,7 @@ def main(exp_config):
     image_tensor_shape = [batch_size] + list(config.image_size) + [1]
     images_pl = tf.placeholder(tf.float32, shape=image_tensor_shape, name='images')
 
-    mask_pl, softmax_pl = model.predict(images_pl, exp_config)
+    mask_pl, softmax_pl = model.predict(images_pl, config)
     saver = tf.train.Saver()
     init = tf.global_variables_initializer()
 
