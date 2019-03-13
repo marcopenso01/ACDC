@@ -47,6 +47,16 @@ def main(exp_config):
 
             x = data['images_test'][ind,...]
             y = data['masks_test'][ind,...]
+            
+            for img in x:
+                if config.equalize:
+                    img = image_utils.equalization_image(img)
+                if config.clahe:
+                    img = image_utils.CLAHE(img)
+                if config.standardize:
+                    img = image_utils.standardize_image(img)
+                if config.normalize:
+                    img = image_utils.normalize_image(img)
 
             x = image_utils.reshape_2Dimage_to_tensor(x)
             y = image_utils.reshape_2Dimage_to_tensor(y)
