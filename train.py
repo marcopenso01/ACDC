@@ -52,7 +52,7 @@ def run_training(continue_run):
     
     # Load data
     data = acdc_data.load_and_maybe_process_data(
-        input_folder=config.input_folder,
+        input_folder=config.data_root,
         preprocessing_folder=config.preprocessing_folder,
         mode=config.data_mode,
         size=config.image_size,
