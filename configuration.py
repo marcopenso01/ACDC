@@ -98,4 +98,4 @@ schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve
 
 train_eval_frequency = 200
 val_eval_frequency = 150
-epoch_freq = 5
+epoch_freq = 10
