@@ -33,7 +33,7 @@ train_on_all_data = False
 # Training settings
 batch_size = 8
 learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
-exponential_decay = True     #True Enet
+exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False
 warmup_training = True
@@ -85,6 +85,8 @@ log_root = os.path.join(project_root, 'acdc_logdir')
 # Pre-process settings
 standardize = True
 normalize = False
+min = -1
+max = 1
 equalize = False
 clahe = False
 
@@ -96,3 +98,4 @@ schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve
 
 train_eval_frequency = 200
 val_eval_frequency = 150
+epoch_freq = 5
