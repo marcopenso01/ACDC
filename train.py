@@ -14,6 +14,7 @@ from multiprocessing import pool
 import pickle
 import numpy as np
 import logging
+import cv2
 
 import utils
 import image_utils
@@ -90,25 +91,17 @@ def run_training(continue_run):
     
     #pre-process
     for img in images_train:
-        if config.equalize:
-            img = image_utils.equalization_image(img)
-        if config.clahe:
-            img = image_utils.CLAHE(img)
         if config.standardize:
             img = image_utils.standardize_image(img)
         if config.normalize:
-            img = image_utils.normalize_image(img)
+            img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
         
     if not train_on_all_data:
         for img in images_val:
-            if config.equalize:
-                img = image_utils.equalization_image(img)
-            if config.clahe:
-                img = image_utils.CLAHE(img)
             if config.standardize:
                 img = image_utils.standardize_image(img)
             if config.normalize:
-                img = image_utils.normalize_image(img)
+                img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
        
     
  #   if config.prob:   #if prob is not 0
@@ -296,9 +289,9 @@ def run_training(continue_run):
                 duration = time.time() - start_time
 
                 # Write the summaries and print an overview fairly often.
-                if step % 10 == 0:
+                if step % 20 == 0:
                     # Print status to stdout.
-                    logging.info('Step %d: loss = %.2f (%.3f sec)' % (step, loss_value, duration))
+                    logging.info('Step %d: loss = %.3f (%.3f sec)' % (step, loss_value, duration))
                     # Update the events file.
 
                     summary_str = sess.run(summary, feed_dict=feed_dict)
@@ -386,6 +379,8 @@ def run_training(continue_run):
                 step += 1
                 
             # end epoch
+            if (epoch + 1) % config.epoch_freq == 0:
+                curr_lr = curr_lr *0.98
             logging.info('Learning rate: %f' % curr_lr)
         sess.close()
     data.close()
