@@ -83,8 +83,8 @@ project_root = '/content/drive/My Drive'                           #'D:\Network'
 log_root = os.path.join(project_root, 'acdc_logdir')               
 
 # Pre-process settings
-standardize = True
-normalize = False
+standardize = False
+normalize = True
 min = -1
 max = 1
 equalize = False
