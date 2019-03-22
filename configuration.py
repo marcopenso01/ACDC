@@ -4,8 +4,8 @@ import os
 import socket
 import logging
 
-#experiment_name = 'unet2D_valid'
-experiment_name = 'unet2D_same'
+experiment_name = 'unet2D_valid'
+#experiment_name = 'unet2D_same'
 # experiment_name = 'unet2D_same_mod'
 #experiment_name = 'ENet'
 
