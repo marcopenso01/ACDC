@@ -41,7 +41,7 @@ def unet2D_valid(images, training, nlabels):
     logging.info('conv4_1')
     logging.info(conv4_1.shape)
     conv4_2 = layers.conv2D_layer_bn(conv4_1, 'conv4_2', num_filters=512, training=training, padding='VALID')
-    logging.info('conv4_2)
+    logging.info('conv4_2')
     logging.info(conv4_2.shape)
 
     pool4 = layers.max_pool_layer2d(conv4_2)
