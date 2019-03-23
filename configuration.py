@@ -20,7 +20,7 @@ model_handle = model_structure.unet2D_same
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
 iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
-skip_connections = True
+skip_connections = False
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
@@ -32,7 +32,7 @@ train_on_all_data = False
 
 # Training settings
 batch_size = 5      #6   #8    #4
-learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
+learning_rate = 0.0001   #unet: 0.01    enet: 0.0005
 exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False    #decrease 10 times the LR when loss gradient lower than threshold
