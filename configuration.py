@@ -97,5 +97,5 @@ schedule_gradient_threshold = 0.00001  # When the gradient of the learning curve
                                        # be reduced
 
 train_eval_frequency = 200
-val_eval_frequency = 200
+val_eval_frequency = 150
 epoch_freq = 10     #100
