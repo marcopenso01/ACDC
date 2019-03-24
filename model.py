@@ -59,8 +59,18 @@ def predict(images, config):
     :param inference_handle: A model function from the model zoo
     :return: A prediction mask, and the corresponding softmax output
     '''
-
-    logits = exp_config.model_handle(images, training=tf.constant(False, dtype=tf.bool), nlabels=exp_config.nlabels)
+    if (config.experiment_name == 'unet2D_valid' or config.experiment_name == 'unet2D_same' or config.experiment_name == 'unet2D_same_mod'):
+            logits = model.inference(images, training=tf.constant(False, dtype=tf.bool), nlabels=config.nlabels)
+    elif config.experiment_name == 'ENet':
+            with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
+                logits = model_structure.ENet(images,
+                                              num_classes=config.nlabels,
+                                              batch_size=config.batch_size,
+                                              is_training=True,
+                                              reuse=None,
+                                              num_initial_blocks=1,
+                                              stage_two_repeat=2,
+                                              skip_connections=config.skip_connections)
     softmax = tf.nn.softmax(logits)
     mask = tf.math.argmax(softmax, axis=-1)
 
