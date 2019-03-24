@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tfwrapper import losses
 import configuration as config
+slim = tf.contrib.slim
 
 import tensorflow.examples.tutorials.mnist
 
