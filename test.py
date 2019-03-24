@@ -13,7 +13,7 @@ import image_utils
 import model
 import logging
 
-def main(exp_config):
+def main(config):
 
     # Load data
     data = acdc_data.load_and_maybe_process_data(
@@ -98,15 +98,5 @@ if __name__ == '__main__':
     parser.add_argument("EXP_PATH", type=str, help="Path to experiment folder (assuming you are in the working directory)")
     args = parser.parse_args()
 
-    base_path = config.project_root
-
-    model_path = os.path.join(base_path, args.EXP_PATH)
-    logging.info(model_path)
-    config_file = glob.glob(model_path + '/*py')[0]
-    logging.info(config_file)
-    config_module = config_file.split('/')[-1].rstrip('.py')
-    logging.info(config_module)
-
-    exp_config = SourceFileLoader(config_module, os.path.join(config_file)).load_module()
-
-    init_iteration = main(exp_config=exp_config)
+   
+    init_iteration = main(config)
