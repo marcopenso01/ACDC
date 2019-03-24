@@ -3,16 +3,22 @@ from glob import glob
 import re
 import argparse
 import pandas as pd
-from medpy.metric.binary import hd, dc, assd
 import numpy as np
 
 import scipy.stats as stats
 import utils
-
+import binary_metric as bm
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 import logging
+
+import numpy
+from scipy.ndimage import _ni_support
+from scipy.ndimage.morphology import distance_transform_edt, binary_erosion,\
+    generate_binary_structure
+from scipy.ndimage.measurements import label, find_objects
+from scipy.stats import pearsonr
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
@@ -38,7 +44,6 @@ def natural_order(sord):
 
 def compute_metrics_on_directories_raw(dir_gt, dir_pred):
     """
-    Calculates a number of measures from the predicted and ground truth segmentations:
     - Dice
     - Hausdorff distance
     - Average surface distance
@@ -98,9 +103,9 @@ def compute_metrics_on_directories_raw(dir_gt, dir_pred):
                 assd_list.append(1)
                 hausdorff_list.append(1)
             else:
-                hausdorff_list.append(hd(gt_binary, pred_binary, voxelspacing=zooms, connectivity=1))
-                assd_list.append(assd(pred_binary, gt_binary, voxelspacing=zooms, connectivity=1))
-                dices_list.append(dc(gt_binary, pred_binary))
+                hausdorff_list.append(bm.hd(gt_binary, pred_binary, voxelspacing=zooms, connectivity=1))
+                assd_list.append(bm.assd(pred_binary, gt_binary, voxelspacing=zooms, connectivity=1))
+                dices_list.append(bm.dc(gt_binary, pred_binary))
 
             cardiac_phase.append(os.path.basename(p_gt).split('.nii.gz')[0].split('_')[-1])
             file_names.append(os.path.basename(p_pred))
