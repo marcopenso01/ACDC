@@ -11,6 +11,7 @@ import utils
 import acdc_data
 import image_utils
 import model
+import logging
 
 def main(exp_config):
 
