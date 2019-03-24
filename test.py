@@ -100,8 +100,11 @@ if __name__ == '__main__':
     base_path = config.project_root
 
     model_path = os.path.join(base_path, args.EXP_PATH)
+    logging.info(model_path)
     config_file = glob.glob(model_path + '/*py')[0]
+    logging.info(config_file)
     config_module = config_file.split('/')[-1].rstrip('.py')
+    logging.info(config_module)
 
     exp_config = SourceFileLoader(config_module, os.path.join(config_file)).load_module()
 
