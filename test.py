@@ -81,7 +81,8 @@ def main(config):
             ax7.imshow(np.squeeze(softmax_out[...,2]))
             ax8 = fig.add_subplot(248)
             ax8.imshow(np.squeeze(softmax_out[...,3]))
-
+            
+            plt.axis('off')
             plt.show()
 
     data.close()
