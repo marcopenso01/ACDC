@@ -101,6 +101,7 @@ if __name__ == '__main__':
     base_path = config.project_root
 
     model_path = os.path.join(base_path, args.EXP_PATH)
+    logging.info(model_path)
 
    
     init_iteration = main(config)
