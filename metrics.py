@@ -289,7 +289,9 @@ def main(path_gt, path_pred, eval_dir):
     :param eval_dir: directory where reports should be written
     :return:
     """
-
+    logging.info(path_gt)
+    logging.info(path_pred)
+    logging.info(eval_dir)
     if not os.path.exists(eval_dir):
         os.makedirs(eval_dir)
 
