@@ -394,4 +394,4 @@ if __name__ == '__main__':
 
 
     if not evaluate_test_set:
-        metrics_acdc.main(path_gt, path_pred, path_eval)
+        metrics.main(path_gt, path_pred, path_eval)
