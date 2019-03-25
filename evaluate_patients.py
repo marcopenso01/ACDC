@@ -130,31 +130,23 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
                                 x = image_utils.reshape_2Dimage_to_tensor(slice_cropped)
                                 y = image_utils.reshape_2Dimage_to_tensor(mask_cropped)
-                                # GET PREDICTION
                                 
+                                # GET PREDICTION
                                 mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: x})
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
                                 # ASSEMBLE BACK THE SLICES
-                                slice_predictions = np.zeros((x,y,num_channels))
-                                
+                                slice_predictions = np.zeros((nx,ny,num_channels))
+                                slice_predictions = prediction_cropped
                                 # RESCALING ON THE LOGITS
                                 if gt_exists:
                                     prediction = transform.resize(slice_predictions,
-                                                                  (mask.shape[0], mask.shape[1], num_channels),
+                                                                  (nx, ny, num_channels),
                                                                   order=1,
                                                                   preserve_range=True,
                                                                   anti_aliasing=True,
                                                                   mode='constant')
-                                else:  # This can occasionally lead to wrong volume size, therefore if gt_exists
-                                       # we use the gt mask size for resizing.
-                                    prediction = transform.rescale(slice_predictions,
-                                                                   (1.0/scale_vector[0], 1.0/scale_vector[1], 1),
-                                                                   order=1,
-                                                                   preserve_range=True,
-                                                                   multichannel=False,
-                                                                   anti_aliasing=True,
-                                                                   mode='constant')
+                                
 
                                 # prediction = transform.resize(slice_predictions,
                                 #                               (mask.shape[0], mask.shape[1], num_channels),
