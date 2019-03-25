@@ -97,6 +97,10 @@ if __name__ == '__main__':
         description="Script for a simple test loop evaluating a 2D network on slices from the test dataset")
     parser.add_argument("EXP_PATH", type=str, help="Path to experiment folder (assuming you are in the working directory)")
     args = parser.parse_args()
+    
+    base_path = config.project_root
+
+    model_path = os.path.join(base_path, args.EXP_PATH)
 
    
     init_iteration = main(config)
