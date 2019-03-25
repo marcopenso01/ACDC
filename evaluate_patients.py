@@ -350,10 +350,9 @@ if __name__ == '__main__':
         logging.info('Using iteration: %d' % use_iter)
 
     base_path = config.project_root
+    logging.info(base_path)
     model_path = os.path.join(base_path, args.EXP_PATH)
-    config_file = glob.glob(model_path + '/*py')[0]
-    config_module = config_file.split('/')[-1].rstrip('.py')
-    exp_config = SourceFileLoader(fullname=config_module, path=os.path.join(config_file)).load_module()
+    logging.info(model_path)
 
     if evaluate_test_set:
         logging.warning('EVALUATING ON TEST SET')
