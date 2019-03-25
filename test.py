@@ -5,6 +5,7 @@ import os
 import glob
 from importlib.machinery import SourceFileLoader
 import argparse
+import cv2
 
 import configuration as config
 import utils
