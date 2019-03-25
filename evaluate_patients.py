@@ -124,13 +124,12 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                   multichannel=False,
                                                                   anti_aliasing=True,
                                                                   mode='constant')
-                                x, y = slice_rescaled.shape
 
                                 slice_cropped = acdc_data.crop_or_pad_slice_to_size(slice_rescaled, nx, ny)
                                 mask_cropped = acdc_data.crop_or_pad_slice_to_size(mask_rescaled, nx, ny)
 
-                                x = image_utils.reshape_2Dimage_to_tensor(x)
-                                y = image_utils.reshape_2Dimage_to_tensor(y)
+                                x = image_utils.reshape_2Dimage_to_tensor(slice_cropped)
+                                y = image_utils.reshape_2Dimage_to_tensor(mask_cropped)
                                 # GET PREDICTION
                                 
                                 mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: x})
