@@ -19,7 +19,7 @@ def main(config):
 
     # Load data
     data = acdc_data.load_and_maybe_process_data(
-        input_folder=config.test_data_root ,
+        input_folder=config.data_root ,                  #data_root    test_data_root
         preprocessing_folder=config.preprocessing_folder,
         mode=config.data_mode,
         size=config.image_size,
