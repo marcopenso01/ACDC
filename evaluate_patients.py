@@ -86,8 +86,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         frame = int(file_base.split('frame')[-1])
                         img_dat = utils.load_nii(file)
                         img = img_dat[0].copy()
-                        img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
-
+                        img = image_utils.normalize_image(img)
 
                         if gt_exists:
                             file_mask = file_base + '_gt.nii.gz'
