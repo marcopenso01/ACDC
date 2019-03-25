@@ -67,8 +67,8 @@ def predict(images, config):
             with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
                 logits = model_structure.ENet(images,
                                               num_classes=config.nlabels,
-                                              batch_size=config.batch_size,
-                                              is_training=True,
+                                              batch_size=1,
+                                              is_training=False,
                                               reuse=None,
                                               num_initial_blocks=1,
                                               stage_two_repeat=2,
