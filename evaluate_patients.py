@@ -14,6 +14,7 @@ from skimage import transform
 import configuration as config
 import model as model
 import utils
+import acdc_data
 import image_utils
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
@@ -86,7 +87,8 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         frame = int(file_base.split('frame')[-1])
                         img_dat = utils.load_nii(file)
                         img = img_dat[0].copy()
-                        img = image_utils.normalize_image(img)
+                        img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
+                        #img = image_utils.normalize_image(img)
 
                         if gt_exists:
                             file_mask = file_base + '_gt.nii.gz'
@@ -113,45 +115,30 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                    multichannel=False,
                                                                    anti_aliasing=True,
                                                                    mode='constant')
-
+                                
+                                slice_mask = np.squeeze(mask[:, :, zz])
+                                mask_rescaled = transform.rescale(slice_mask,
+                                                                  scale_vector,
+                                                                  order=0,
+                                                                  preserve_range=True,
+                                                                  multichannel=False,
+                                                                  anti_aliasing=True,
+                                                                  mode='constant')
                                 x, y = slice_rescaled.shape
 
-                                x_s = (x - nx) // 2
-                                y_s = (y - ny) // 2
-                                x_c = (nx - x) // 2
-                                y_c = (ny - y) // 2
+                                slice_cropped = acdc_data.crop_or_pad_slice_to_size(slice_rescaled, nx, ny)
+                                mask_cropped = acdc_data.crop_or_pad_slice_to_size(mask_rescaled, nx, ny)
 
-                                # Crop section of image for prediction
-                                if x > nx and y > ny:
-                                    slice_cropped = slice_rescaled[x_s:x_s+nx, y_s:y_s+ny]
-                                else:
-                                    slice_cropped = np.zeros((nx,ny))
-                                    if x <= nx and y > ny:
-                                        slice_cropped[x_c:x_c+ x, :] = slice_rescaled[:,y_s:y_s + ny]
-                                    elif x > nx and y <= ny:
-                                        slice_cropped[:, y_c:y_c + y] = slice_rescaled[x_s:x_s + nx, :]
-                                    else:
-                                        slice_cropped[x_c:x_c+x, y_c:y_c + y] = slice_rescaled[:, :]
-
-
+                                x = image_utils.reshape_2Dimage_to_tensor(x)
+                                y = image_utils.reshape_2Dimage_to_tensor(y)
                                 # GET PREDICTION
-                                network_input = np.float32(np.tile(np.reshape(slice_cropped, (nx, ny, 1)), (batch_size, 1, 1, 1)))
-                                mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: network_input})
+                                
+                                mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: x})
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
                                 # ASSEMBLE BACK THE SLICES
                                 slice_predictions = np.zeros((x,y,num_channels))
-                                # insert cropped region into original image again
-                                if x > nx and y > ny:
-                                    slice_predictions[x_s:x_s+nx, y_s:y_s+ny,:] = prediction_cropped
-                                else:
-                                    if x <= nx and y > ny:
-                                        slice_predictions[:, y_s:y_s+ny,:] = prediction_cropped[x_c:x_c+ x, :,:]
-                                    elif x > nx and y <= ny:
-                                        slice_predictions[x_s:x_s + nx, :,:] = prediction_cropped[:, y_c:y_c + y,:]
-                                    else:
-                                        slice_predictions[:, :,:] = prediction_cropped[x_c:x_c+ x, y_c:y_c + y,:]
-
+                                
                                 # RESCALING ON THE LOGITS
                                 if gt_exists:
                                     prediction = transform.resize(slice_predictions,
@@ -182,94 +169,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
 
-                        elif config.data_mode == '3D':
-
-
-                            pixel_size = (img_dat[2].structarr['pixdim'][1], img_dat[2].structarr['pixdim'][2],
-                                          img_dat[2].structarr['pixdim'][3])
-
-                            scale_vector = (pixel_size[0] / config.target_resolution[0],
-                                            pixel_size[1] / config.target_resolution[1],
-                                            pixel_size[2] / config.target_resolution[2])
-
-                            vol_scaled = transform.rescale(img,
-                                                           scale_vector,
-                                                           order=1,
-                                                           preserve_range=True,
-                                                           multichannel=False,
-                                                           mode='constant')
-
-                            nz_max = config.image_size[2]
-                            slice_vol = np.zeros((nx, ny, nz_max), dtype=np.float32)
-
-                            nz_curr = vol_scaled.shape[2]
-                            stack_from = (nz_max - nz_curr) // 2
-                            stack_counter = stack_from
-
-                            x, y, z = vol_scaled.shape
-
-                            x_s = (x - nx) // 2
-                            y_s = (y - ny) // 2
-                            x_c = (nx - x) // 2
-                            y_c = (ny - y) // 2
-
-                            for zz in range(nz_curr):
-
-                                slice_rescaled = vol_scaled[:, :, zz]
-
-                                if x > nx and y > ny:
-                                    slice_cropped = slice_rescaled[x_s:x_s + nx, y_s:y_s + ny]
-                                else:
-                                    slice_cropped = np.zeros((nx, ny))
-                                    if x <= nx and y > ny:
-                                        slice_cropped[x_c:x_c + x, :] = slice_rescaled[:, y_s:y_s + ny]
-                                    elif x > nx and y <= ny:
-                                        slice_cropped[:, y_c:y_c + y] = slice_rescaled[x_s:x_s + nx, :]
-
-                                    else:
-                                        slice_cropped[x_c:x_c + x, y_c:y_c + y] = slice_rescaled[:, :]
-
-                                slice_vol[:, :, stack_counter] = slice_cropped
-                                stack_counter += 1
-
-                            stack_to = stack_counter
-
-                            network_input = np.float32(np.reshape(slice_vol, (1, nx, ny, nz_max, 1)))
-
-                            start_time = time.time()
-                            mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: network_input})
-                            logging.info('Classified 3D: %f secs' % (time.time() - start_time))
-
-                            prediction_nzs = mask_out[0, :, :, stack_from:stack_to]  # non-zero-slices
-
-                            if not prediction_nzs.shape[2] == nz_curr:
-                                raise ValueError('sizes mismatch')
-
-                            # ASSEMBLE BACK THE SLICES
-                            prediction_scaled = np.zeros(vol_scaled.shape)  # last dim is for logits classes
-
-                            # insert cropped region into original image again
-                            if x > nx and y > ny:
-                                prediction_scaled[x_s:x_s + nx, y_s:y_s + ny, :] = prediction_nzs
-                            else:
-                                if x <= nx and y > ny:
-                                    prediction_scaled[:, y_s:y_s + ny, :] = prediction_nzs[x_c:x_c + x, :, :]
-                                elif x > nx and y <= ny:
-                                    prediction_scaled[x_s:x_s + nx, :, :] = prediction_nzs[:, y_c:y_c + y, :]
-                                else:
-                                    prediction_scaled[:, :, :] = prediction_nzs[x_c:x_c + x, y_c:y_c + y, :]
-
-                            logging.info('Prediction_scaled mean %f' % (np.mean(prediction_scaled)))
-
-                            prediction = transform.resize(prediction_scaled,
-                                                          (mask.shape[0], mask.shape[1], mask.shape[2], num_channels),
-                                                          order=1,
-                                                          preserve_range=True,
-                                                          mode='constant')
-                            prediction = np.argmax(prediction, axis=-1)
-                            prediction_arr = np.asarray(prediction, dtype=np.uint8)
-
-
+     
 
                         # This is the same for 2D and 3D again
                         if do_postprocessing:
