@@ -20,7 +20,7 @@ model_handle = model_structure.unet2D_same
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
 iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
-skip_connections = False
+skip_connections = True
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
@@ -78,9 +78,9 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 # Paths settings (we need to mount MyDrive before)
 data_root = '/content/drive/My Drive/ACDC_challenge/train'      # 'D:\Network\ACDC_challenge\train'       '/content/drive/My Drive/ACDC_challenge/train'
 test_data_root = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'   '/content/drive/My Drive/ACDC_challenge/test'
-preprocessing_folder = '/content/drive/My Drive/preproc_data'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
+preprocessing_folder = '/content/drive/My Drive/preproc_data2'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
 project_root = '/content/drive/My Drive'                           #'D:\Network'      '/content/drive/My Drive'
-log_root = os.path.join(project_root, 'acdc_logdir')               
+log_root = os.path.join(project_root, 'acdc_logdir2')               
 
 # Pre-process settings
 standardize = False
