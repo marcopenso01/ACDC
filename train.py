@@ -89,20 +89,7 @@ def run_training(continue_run):
     logging.info(labels_train.shape)
     logging.info(labels_train.dtype)
     
-    #pre-process
-    for img in images_train:
-        if config.standardize:
-            img = image_utils.standardize_image(img)
-        if config.normalize:
-            img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
-        
-    if not train_on_all_data:
-        for img in images_val:
-            if config.standardize:
-                img = image_utils.standardize_image(img)
-            if config.normalize:
-                img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
-       
+   
     
  #   if config.prob:   #if prob is not 0
  #       logging.info('Before data_augmentation the number of training images is:')
