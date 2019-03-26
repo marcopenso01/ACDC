@@ -100,6 +100,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                             pixel_size[1] / config.target_resolution[1])
 
                             predictions = []
+                            mask_arr = []
 
                             for zz in range(img.shape[2]):
 
@@ -152,11 +153,11 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
                                 prediction = np.uint8(np.argmax(prediction, axis=-1))
                                 predictions.append(prediction)
-
-
+                                mask_arr.append(np.squeeze(y))
+                                
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
-
-     
+                            mask_arr = np.asarray(mask_arr, dtype=np.uint8)
+                            mask_arr = np.transpose(mask_arr, (1,2,0))
 
                         # This is the same for 2D and 3D again
                         if do_postprocessing:
@@ -203,7 +204,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             utils.save_nii(gt_file_name, mask, out_affine, out_header)
 
                             # Save difference mask between predictions and ground truth
-                            difference_mask = np.where(np.abs(prediction_arr-mask_cropped) > 0, [1], [0])
+                            difference_mask = np.where(np.abs(prediction_arr-mask_arr) > 0, [1], [0])
                             difference_mask = np.asarray(difference_mask, dtype=np.uint8)
                             diff_file_name = os.path.join(output_folder,
                                                           'difference',
