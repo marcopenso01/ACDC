@@ -89,7 +89,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         if gt_exists:
                             file_mask = file_base + '_gt.nii.gz'
                             mask_dat = utils.load_nii(file_mask)
-                            #mask = mask_dat[0]
+                            mask = mask_dat[0]
 
                         start_time = time.time()
 
