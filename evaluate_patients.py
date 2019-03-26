@@ -83,7 +83,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         frame = int(file_base.split('frame')[-1])
                         img_dat = utils.load_nii(file)
                         img = img_dat[0].copy()
-                        img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
+                        #img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
                         #img = image_utils.normalize_image(img)
 
                         if gt_exists:
@@ -124,12 +124,19 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
                                 slice_cropped = acdc_data.crop_or_pad_slice_to_size(slice_rescaled, nx, ny)
                                 mask_cropped = acdc_data.crop_or_pad_slice_to_size(mask_rescaled, nx, ny)
-
+                                
+                                slice_cropped = np.float32(slice_cropped)
+                                mask_cropped = np.asarray(mask_cropped, dtype=np.uint8)
+                                
                                 x = image_utils.reshape_2Dimage_to_tensor(slice_cropped)
                                 y = image_utils.reshape_2Dimage_to_tensor(mask_cropped)
                                 
                                 # GET PREDICTION
-                                mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: x})
+                                feed_dict = {
+                                images_pl: x,
+                                }
+                                
+                                mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict=feed_dict)
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
                                 # ASSEMBLE BACK THE SLICES
@@ -156,8 +163,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 mask_arr.append(np.squeeze(y))
                                 
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
-                            mask_arr = np.asarray(mask_arr, dtype=np.uint8)
-                            mask_arr = np.transpose(mask_arr, (1,2,0))
+                            mask_arrs = np.transpose(np.asarray(mask_arr, dtype=np.uint8), (1,2,0))
 
                         # This is the same for 2D and 3D again
                         if do_postprocessing:
@@ -204,7 +210,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             utils.save_nii(gt_file_name, mask, out_affine, out_header)
 
                             # Save difference mask between predictions and ground truth
-                            difference_mask = np.where(np.abs(prediction_arr-mask_arr) > 0, [1], [0])
+                            difference_mask = np.where(np.abs(prediction_arr-mask_arrs) > 0, [1], [0])
                             difference_mask = np.asarray(difference_mask, dtype=np.uint8)
                             diff_file_name = os.path.join(output_folder,
                                                           'difference',
