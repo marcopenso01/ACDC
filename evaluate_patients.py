@@ -89,7 +89,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         if gt_exists:
                             file_mask = file_base + '_gt.nii.gz'
                             mask_dat = utils.load_nii(file_mask)
-                            mask = mask_dat[0]
+                            #mask = mask_dat[0]
 
                         start_time = time.time()
 
@@ -164,7 +164,8 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
                             mask_arrs = np.transpose(np.asarray(mask_arr, dtype=np.uint8), (1,2,0))
-
+                            mask_arrs = mask_dat[0]
+                            
                         # This is the same for 2D and 3D again
                         if do_postprocessing:
                             prediction_arr = image_utils.keep_largest_connected_components(prediction_arr)
@@ -207,7 +208,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             # Save GT image
                             gt_file_name = os.path.join(output_folder, 'ground_truth', 'patient' + patient_id + frame_suffix + '.nii.gz')
                             logging.info('saving to: %s' % gt_file_name)
-                            utils.save_nii(gt_file_name, mask, out_affine, out_header)
+                            utils.save_nii(gt_file_name, mask_arrs, out_affine, out_header)
 
                             # Save difference mask between predictions and ground truth
                             difference_mask = np.where(np.abs(prediction_arr-mask_arrs) > 0, [1], [0])
