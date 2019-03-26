@@ -41,11 +41,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
         sess.run(init)
 
-        if not use_iter:
-            checkpoint_path = utils.get_latest_model_checkpoint_path(model_path, 'model_best_dice.ckpt')
-        else:
-            checkpoint_path = os.path.join(model_path, 'model.ckpt-%d' % use_iter)
-
+        checkpoint_path = utils.get_latest_model_checkpoint_path(model_path, 'model_best_dice.ckpt')
         saver.restore(sess, checkpoint_path)
 
         init_iteration = int(checkpoint_path.split('/')[-1].split('-')[-1])
@@ -207,7 +203,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             utils.save_nii(gt_file_name, mask, out_affine, out_header)
 
                             # Save difference mask between predictions and ground truth
-                            difference_mask = np.where(np.abs(prediction_arr-mask) > 0, [1], [0])
+                            difference_mask = np.where(np.abs(prediction_arr-mask_cropped) > 0, [1], [0])
                             difference_mask = np.asarray(difference_mask, dtype=np.uint8)
                             diff_file_name = os.path.join(output_folder,
                                                           'difference',
