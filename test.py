@@ -62,8 +62,10 @@ def main(config):
             y = image_utils.reshape_2Dimage_to_tensor(y)
             logging.info('x')
             logging.info(x.shape)
+            loggin.info(x.dtype)
             logging.info('y')
             logging.info(y.shape)
+            logging.info(y.dtype)
             
             feed_dict = {
                 images_pl: x,
@@ -106,6 +108,9 @@ def main(config):
             ax8.title.set_text('g')
             plt.gray()
             plt.show()
+            
+            logging.info('mask_out type')
+            logging.info(mask_out.dtype)
 
     data.close()
 
