@@ -4,10 +4,10 @@ import os
 import socket
 import logging
 
-#experiment_name = 'unet2D_valid'
+experiment_name = 'unet2D_valid'
 # experiment_name = 'unet2D_same'
 # experiment_name = 'unet2D_same_mod'
-experiment_name = 'ENet'
+#experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
@@ -24,20 +24,20 @@ skip_connections = False
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (216, 216)   #(212,212)
+image_size = (212, 212)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
 train_on_all_data = False 
 
 # Training settings
-batch_size = 5      #6   #8    #4
-learning_rate = 0.0005   #unet: 0.01    enet: 0.0005
+batch_size = 4      #6   #8    #4
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
 exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False    #decrease 10 times the LR when loss gradient lower than threshold
 warmup_training = True
-weight_decay = 2e-4  # enet:2e-4    #unet: 0.00000
+weight_decay = 0  # enet:2e-4    #unet: 0.00000
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
@@ -78,9 +78,9 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 # Paths settings (we need to mount MyDrive before)
 data_root = '/content/drive/My Drive/ACDC_challenge/train'      # 'D:\Network\ACDC_challenge\train'       '/content/drive/My Drive/ACDC_challenge/train'
 test_data_root = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'   '/content/drive/My Drive/ACDC_challenge/test'
-preprocessing_folder = '/content/drive/My Drive/preproc_data'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
+preprocessing_folder = '/content/drive/My Drive/preproc_data2'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
 project_root = '/content/drive/My Drive'                           #'D:\Network'      '/content/drive/My Drive'
-log_root = os.path.join(project_root, 'acdc_logdir')               
+log_root = os.path.join(project_root, 'acdc_logdir2')               
 
 # Pre-process settings
 standardize = False
