@@ -62,7 +62,7 @@ def main(config):
             y = image_utils.reshape_2Dimage_to_tensor(y)
             logging.info('x')
             logging.info(x.shape)
-            loggin.info(x.dtype)
+            logging.info(x.dtype)
             logging.info('y')
             logging.info(y.shape)
             logging.info(y.dtype)
