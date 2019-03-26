@@ -51,12 +51,13 @@ def main(config):
             x = data['images_test'][ind,...]
             y = data['masks_test'][ind,...]
             
-            for img in x:
-                if config.standardize:
-                    img = image_utils.standardize_image(img)
-                if config.normalize:
-                    img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
+          #  for img in x:
+           #     if config.standardize:
+            #        img = image_utils.standardize_image(img)
+             #   if config.normalize:
+              #      img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
 
+            x = cv2.normalize(x, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
 
             x = image_utils.reshape_2Dimage_to_tensor(x)
             y = image_utils.reshape_2Dimage_to_tensor(y)
