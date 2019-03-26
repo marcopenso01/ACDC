@@ -60,13 +60,20 @@ def main(config):
 
             x = image_utils.reshape_2Dimage_to_tensor(x)
             y = image_utils.reshape_2Dimage_to_tensor(y)
-
+            logging.info('x')
+            logging.info(x.shape)
+            logging.info('y')
+            logging.info(y.shape)
+            
             feed_dict = {
                 images_pl: x,
             }
 
             mask_out, softmax_out = sess.run([mask_pl, softmax_pl], feed_dict=feed_dict)
-
+            logging.info('mask_out')
+            logging.info(mask_out.shape)
+            logging.info('softmax_out')
+            logging.info(softmax_out.shape)
             fig = plt.figure(1)
             ax1 = fig.add_subplot(241)
             ax1.set_axis_off()
