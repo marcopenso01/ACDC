@@ -178,8 +178,8 @@ def unet2D_same(images, training, nlabels):
     logging.info('conv7_1')
     logging.info(conv7_1.shape)
     conv7_2 = layers.conv2D_layer_bn(conv7_1, 'conv7_2', num_filters=256, training=training)
-    logging.info('conv8_2')
-    logging.info(conv8_2.shape)
+    logging.info('conv7_2')
+    logging.info(conv7_2.shape)
 
     upconv2 = layers.deconv2D_layer_bn(conv7_2, name='upconv2', kernel_size=(4, 4), strides=(2, 2), num_filters=128, training=training)
     logging.info('upconv2')
