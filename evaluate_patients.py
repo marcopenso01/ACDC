@@ -10,6 +10,7 @@ import time
 from importlib.machinery import SourceFileLoader
 import tensorflow as tf
 from skimage import transform
+import matplotlib.pyplot as plt
 
 import configuration as config
 import model as model
@@ -101,6 +102,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
 
                             predictions = []
                             mask_arr = []
+                            img_arr = []
 
                             for zz in range(img.shape[2]):
 
@@ -137,7 +139,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 }
                                 
                                 mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict=feed_dict)
-                                
+'''                                
                                 fig = plt.figure()
                                 ax1 = fig.add_subplot(231)
                                 ax1.set_axis_off()
@@ -166,6 +168,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 ax6.title.set_text('f')
                                 plt.gray()
                                 plt.show()
+'''
                             
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
@@ -191,10 +194,12 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 prediction = np.uint8(np.argmax(prediction, axis=-1))
                                 predictions.append(prediction)
                                 mask_arr.append(np.squeeze(y))
+                                img_arr.append(np.squeeze(x))
                                 
                             prediction_arr = np.transpose(np.asarray(predictions, dtype=np.uint8), (1,2,0))
                             mask_arrs = np.transpose(np.asarray(mask_arr, dtype=np.uint8), (1,2,0))
-                            
+                            img_arrs = np.transpose(np.asarray(img_arr, dtype=np.float32), (1,2,0))                   
+
                             
                         # This is the same for 2D and 3D again
                         if do_postprocessing:
@@ -243,6 +248,32 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             # Save difference mask between predictions and ground truth
                             difference_mask = np.where(np.abs(prediction_arr-mask_arrs) > 0, [1], [0])
                             difference_mask = np.asarray(difference_mask, dtype=np.uint8)
+                            
+                            for zz in range(difference_mask.shape[2]):
+                          
+                                fig = plt.figure()
+                                ax1 = fig.add_subplot(221)
+                                ax1.set_axis_off()
+                                ax1.imshow(img_arrs[:,:,zz])
+                                ax2 = fig.add_subplot(222)
+                                ax2.set_axis_off()
+                                ax2.imshow(mask_arrs[:,:,zz])
+                                ax3 = fig.add_subplot(223)
+                                ax3.set_axis_off()
+                                ax3.imshow(prediction_arr[:,:,zz])
+                                ax1.title.set_text('a')
+                                ax2.title.set_text('b')
+                                ax3.title.set_text('c')
+                                ax4 = fig.add_subplot(224)
+                                ax4.set_axis_off()
+                                ax4.imshow(difference_mask[:,:,zz], cmap=plt.cm.gnuplot)
+                                ax1.title.set_text('a')
+                                ax2.title.set_text('b')
+                                ax3.title.set_text('c')
+                                ax4.title.set_text('d')
+                                plt.gray()
+                                plt.show()
+                            
                             diff_file_name = os.path.join(output_folder,
                                                           'difference',
                                                           'patient' + patient_id + frame_suffix + '.nii.gz')
