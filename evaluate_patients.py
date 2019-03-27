@@ -137,6 +137,36 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                 }
                                 
                                 mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict=feed_dict)
+                                
+                                fig = plt.figure()
+                                ax1 = fig.add_subplot(231)
+                                ax1.set_axis_off()
+                                ax1.imshow(np.squeeze(x), cmap='gray')
+                                ax2 = fig.add_subplot(232)
+                                ax2.set_axis_off()
+                                ax2.imshow(np.squeeze(y))
+                                ax3 = fig.add_subplot(233)
+                                ax3.set_axis_off()
+                                ax3.imshow(np.squeeze(mask_out))
+                                ax1.title.set_text('a')
+                                ax2.title.set_text('b')
+                                ax3.title.set_text('c')
+
+                                ax4 = fig.add_subplot(234)
+                                ax4.set_axis_off()
+                                ax4.imshow(np.squeeze(logits_out[...,1]))
+                                ax5 = fig.add_subplot(235)
+                                ax5.set_axis_off()
+                                ax5.imshow(np.squeeze(logits_out[...,2]))
+                                ax6 = fig.add_subplot(236)
+                                ax6.set_axis_off()
+                                ax6.imshow(np.squeeze(logits_out[...,3]))
+                                ax4.title.set_text('d')
+                                ax5.title.set_text('e')
+                                ax6.title.set_text('f')
+                                plt.gray()
+                                plt.show()
+                            
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
                                 # ASSEMBLE BACK THE SLICES
