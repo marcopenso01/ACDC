@@ -7,13 +7,15 @@ import logging
 #experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
 # experiment_name = 'unet2D_same_mod'
-experiment_name = 'ENet'
+experiment_name = 'unet2D_light'
+#experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
-model_handle = model_structure.unet2D_valid
+#model_handle = model_structure.unet2D_valid
 #model_handle = model_structure.unet2D_same
 #model_handle = model_structure.unet2D_same_mod
+model_handle = model_structure.unet2D_light
 
 # Model settings Enet
 # iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
@@ -31,8 +33,8 @@ split_test_train = True   #divide data in train (80%) and test (20%)
 train_on_all_data = False 
 
 # Training settings
-batch_size = 5      #4   #5   #8
-learning_rate = 0.0001   #unet: 0.01    enet: 0.0005
+batch_size = 4      #4   #5   #8
+learning_rate = 0.01   #unet: 0.01    enet: 0.0005
 exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False    #decrease 10 times the LR when loss gradient lower than threshold
