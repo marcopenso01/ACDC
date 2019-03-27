@@ -3,7 +3,7 @@ from tfwrapper import losses
 import configuration as config
 slim = tf.contrib.slim
 import model_structure
-
+import logging
 import tensorflow.examples.tutorials.mnist
 
 
@@ -62,17 +62,19 @@ def predict(images, config):
     :return: A prediction mask, and the corresponding softmax output
     '''
     if (config.experiment_name == 'unet2D_valid' or config.experiment_name == 'unet2D_same' or config.experiment_name == 'unet2D_same_mod'):
-            logits = inference(images, config, training=tf.constant(False, dtype=tf.bool)
+        logits = inference(images, config, training=tf.constant(False, dtype=tf.bool)
     elif config.experiment_name == 'ENet':
-            with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
-                logits = model_structure.ENet(images,
-                                              num_classes=config.nlabels,
-                                              batch_size=1,
-                                              is_training=False,
-                                              reuse=None,
-                                              num_initial_blocks=1,
-                                              stage_two_repeat=2,
-                                              skip_connections=config.skip_connections)
+        with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
+            logits = model_structure.ENet(images,
+                                          num_classes=config.nlabels,
+                                          batch_size=1,
+                                          is_training=False,
+                                          reuse=None,
+                                          num_initial_blocks=1,
+                                          stage_two_repeat=2,
+                                          skip_connections=config.skip_connections)
+    else:
+        logging.warning('invalid experiment_name!') 
     softmax = tf.nn.softmax(logits)
     mask = tf.math.argmax(softmax, axis=-1)
 
