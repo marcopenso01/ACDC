@@ -6,16 +6,16 @@ import logging
 
 #experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
-# experiment_name = 'unet2D_same_mod'
-experiment_name = 'unet2D_light'
+experiment_name = 'unet2D_same_mod'
+#experiment_name = 'unet2D_light'
 #experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 #model_handle = model_structure.unet2D_valid
 #model_handle = model_structure.unet2D_same
-#model_handle = model_structure.unet2D_same_mod
-model_handle = model_structure.unet2D_light
+model_handle = model_structure.unet2D_same_mod
+#model_handle = model_structure.unet2D_light
 
 # Model settings Enet
 # iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
@@ -39,7 +39,7 @@ exponential_decay = False     #True Enet
 optimizer_handle = tf.train.AdamOptimizer     #(beta1 = 0.9, beta2 = 0.999, epsilon=1e-08)
 schedule_lr = False    #decrease 10 times the LR when loss gradient lower than threshold
 warmup_training = True
-weight_decay = 2e-4  # enet:2e-4    #unet: 0.00000
+weight_decay = 0  # enet:2e-4    #unet: 0.00000
 momentum = None
 # loss can be 'weighted_crossentropy'/'crossentropy'/'dice'/'dice_onlyfg'/'crossentropy_and_dice (alfa,beta)'
 loss_type = 'weighted_crossentropy'
