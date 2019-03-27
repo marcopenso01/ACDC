@@ -59,6 +59,7 @@ def compute_metrics_on_directories_raw(dir_gt, dir_pred):
     assd_list = []
     vol_list = []
     vol_err_list = []
+    vol_gt_list = []
 
     structures_dict = {1: 'RV', 2: 'Myo', 3: 'LV'}
 
@@ -84,6 +85,7 @@ def compute_metrics_on_directories_raw(dir_gt, dir_pred):
 
             vol_list.append(volpred)
             vol_err_list.append(volpred - volgt)
+            vol_gt_list.append(volgt)
             
             if np.sum(gt_binary) == 0 and np.sum(pred_binary) == 0:
                 dices_list.append(1)
@@ -105,7 +107,7 @@ def compute_metrics_on_directories_raw(dir_gt, dir_pred):
 
 
     df = pd.DataFrame({'dice': dices_list, 'hd': hausdorff_list, 'assd': assd_list,
-                       'vol': vol_list, 'vol_err': vol_err_list,
+                       'vol': vol_list, 'vol_gt': vol_gt_list, 'vol_err': vol_err_list,
                       'phase': cardiac_phase, 'struc': structure_names, 'filename': file_names})
 
     return df
