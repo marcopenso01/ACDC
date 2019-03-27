@@ -62,7 +62,7 @@ def predict(images, config):
     :return: A prediction mask, and the corresponding softmax output
     '''
     if (config.experiment_name == 'unet2D_valid' or config.experiment_name == 'unet2D_same' or config.experiment_name == 'unet2D_same_mod'):
-        logits = inference(images, config, training=tf.constant(False, dtype=tf.bool)
+        logits = inference(images, config, training=tf.constant(False, dtype=tf.bool))
     elif config.experiment_name == 'ENet':
         with slim.arg_scope(model_structure.ENet_arg_scope(weight_decay=2e-4)):
             logits = model_structure.ENet(images,
