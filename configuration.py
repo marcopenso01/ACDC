@@ -80,7 +80,7 @@ data_root = '/content/drive/My Drive/ACDC_challenge/train'      # 'D:\Network\AC
 test_data_root = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'   '/content/drive/My Drive/ACDC_challenge/test'
 preprocessing_folder = '/content/drive/My Drive/preproc_data'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
 project_root = '/content/drive/My Drive'                           #'D:\Network'      '/content/drive/My Drive'
-log_root = os.path.join(project_root, 'acdc_logdir2')               
+log_root = os.path.join(project_root, 'acdc_logdir')               
 
 # Pre-process settings
 standardize = False
