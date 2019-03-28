@@ -6,9 +6,9 @@ import logging
 
 #experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
-experiment_name = 'unet2D_same_mod'
+#experiment_name = 'unet2D_same_mod'
 #experiment_name = 'unet2D_light'
-#experiment_name = 'ENet'
+experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
@@ -22,7 +22,7 @@ model_handle = model_structure.unet2D_same_mod
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
 iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
-skip_connections = False
+skip_connections = True
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
