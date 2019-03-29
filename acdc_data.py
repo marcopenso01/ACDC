@@ -86,7 +86,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
         if os.path.isdir(folder_path):
 
             if split_test_train:
-                train_test = 'test' if (int(folder[-3:]) % 5 == 0) else 'train'
+                train_test = 'test' if (int(folder[-3:]) % 5 == 0) else 'train'     #validation  % 8  (70-10)
             else:
                 train_test = 'train'
 
