@@ -283,7 +283,7 @@ if __name__ == '__main__':
     logging.info(model_path)
 
     if evaluate_test_set:
-        logging.warning('EVALUATING ON TEST SET')
+        logging.warning('EVALUATING ON TEST SET') #not use it
         input_path = config.test_data_root
         output_path = os.path.join(model_path, 'predictions_testset')
     elif evaluate_all:
@@ -291,7 +291,7 @@ if __name__ == '__main__':
         input_path = config.data_root
         output_path = os.path.join(model_path, 'predictions_alltrain')
     else:
-        logging.warning('EVALUATING ON VALIDATION SET')
+        logging.warning('EVALUATING ON TEST SET')
         input_path = config.data_root
         output_path = os.path.join(model_path, 'predictions')
 
