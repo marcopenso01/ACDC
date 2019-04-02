@@ -7,15 +7,15 @@ import logging
 #experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
 #experiment_name = 'unet2D_same_mod'
-#experiment_name = 'unet2D_light'
-experiment_name = 'ENet'
+experiment_name = 'unet2D_light'
+#experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
 #model_handle = model_structure.unet2D_valid
 #model_handle = model_structure.unet2D_same
-model_handle = model_structure.unet2D_same_mod
-#model_handle = model_structure.unet2D_light
+#model_handle = model_structure.unet2D_same_mod
+model_handle = model_structure.unet2D_light
 
 # Model settings Enet
 # iniz = tf.contrib.layers.xavier_initializer(uniform=True)  #xavier_uniform
