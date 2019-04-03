@@ -4,17 +4,17 @@ import os
 import socket
 import logging
 
-experiment_name = 'unet2D_valid'
+#experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
-#experiment_name = 'unet2D_same_mod'
+experiment_name = 'unet2D_same_mod'
 #experiment_name = 'unet2D_light'
 #experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
-model_handle = model_structure.unet2D_valid
+#model_handle = model_structure.unet2D_valid
 #model_handle = model_structure.unet2D_same
-#model_handle = model_structure.unet2D_same_mod
+model_handle = model_structure.unet2D_same_mod
 #model_handle = model_structure.unet2D_light
 
 # Model settings Enet
@@ -26,7 +26,7 @@ skip_connections = True
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (212, 212)   #(212,212)
+image_size = (216, 216)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
