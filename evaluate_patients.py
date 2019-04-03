@@ -99,6 +99,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             pixel_size = (img_dat[2].structarr['pixdim'][1], img_dat[2].structarr['pixdim'][2])
                             scale_vector = (pixel_size[0] / config.target_resolution[0],
                                             pixel_size[1] / config.target_resolution[1])
+                            print(scale_vector)
 
                             predictions = []
                             mask_arr = []
