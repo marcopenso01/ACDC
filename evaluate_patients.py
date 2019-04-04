@@ -86,6 +86,9 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                         img = img_dat[0].copy()
                         #img = cv2.normalize(img, dst=None, alpha=config.min, beta=config.max, norm_type=cv2.NORM_MINMAX)
                         #img = image_utils.normalize_image(img)
+                        print('img')
+                        print(img.shape)
+                        print(img.dtype)
 
                         if gt_exists:
                             file_mask = file_base + '_gt.nii.gz'
@@ -99,7 +102,8 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                             pixel_size = (img_dat[2].structarr['pixdim'][1], img_dat[2].structarr['pixdim'][2])
                             scale_vector = (pixel_size[0] / config.target_resolution[0],
                                             pixel_size[1] / config.target_resolution[1])
-                            print(scale_vector)
+                            print('pixel_size', pixel_size)
+                            print('scale_vector', scale_vector)
 
                             predictions = []
                             mask_arr = []
@@ -115,6 +119,8 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                    multichannel=False,
                                                                    anti_aliasing=True,
                                                                    mode='constant')
+                                print('slice_img', slice_img)
+                                print('slice_rescaled', slice_rescaled)
                                 
                                 slice_mask = np.squeeze(mask[:, :, zz])
                                 mask_rescaled = transform.rescale(slice_mask,
@@ -126,6 +132,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                   mode='constant')
 
                                 slice_cropped = acdc_data.crop_or_pad_slice_to_size(slice_rescaled, nx, ny)
+                                print('slice_cropped', slice_cropped)
                                 mask_cropped = acdc_data.crop_or_pad_slice_to_size(mask_rescaled, nx, ny)
                                 
                                 slice_cropped = np.float32(slice_cropped)
