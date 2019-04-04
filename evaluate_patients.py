@@ -119,8 +119,8 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                    multichannel=False,
                                                                    anti_aliasing=True,
                                                                    mode='constant')
-                                print('slice_img', slice_img)
-                                print('slice_rescaled', slice_rescaled)
+                                print('slice_img', slice_img.shape)
+                                print('slice_rescaled', slice_rescaled.shape)
                                 
                                 slice_mask = np.squeeze(mask[:, :, zz])
                                 mask_rescaled = transform.rescale(slice_mask,
@@ -132,7 +132,7 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                                                                   mode='constant')
 
                                 slice_cropped = acdc_data.crop_or_pad_slice_to_size(slice_rescaled, nx, ny)
-                                print('slice_cropped', slice_cropped)
+                                print('slice_cropped', slice_cropped.shape)
                                 mask_cropped = acdc_data.crop_or_pad_slice_to_size(mask_rescaled, nx, ny)
                                 
                                 slice_cropped = np.float32(slice_cropped)
