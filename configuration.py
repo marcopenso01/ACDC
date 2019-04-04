@@ -4,11 +4,11 @@ import os
 import socket
 import logging
 
-experiment_name = 'unet2D_valid'
+#experiment_name = 'unet2D_valid'
 #experiment_name = 'unet2D_same'
 #experiment_name = 'unet2D_same_mod'
 #experiment_name = 'unet2D_light'
-#experiment_name = 'ENet'
+experiment_name = 'ENet'
 
 # Model settings Unet2D
 weight_init = 'he_normal'    # xavier_uniform/ xavier_normal/ he_normal /he_uniform /caffe_uniform/ simple/ bilinear
@@ -22,11 +22,11 @@ model_handle = model_structure.unet2D_valid
 # iniz = tf.contrib.layers.xavier_initializer(uniform=False)  #xavier_normal
 iniz = tf.contrib.layers.variance_scaling_initializer(uniform=False)  #he_normal
 # iniz = tf.contrib.layers.variance_scaling_initializer(uniform=True)  #he_uniform
-skip_connections = False
+skip_connections = True
 
 # Data settings
 data_mode = '2D'  # 2D or 3D
-image_size = (212, 212)   #(212,212)
+image_size = (216, 216)   #(212,212)
 target_resolution = (1.36719, 1.36719)
 nlabels = 4
 split_test_train = True   #divide data in train (80%) and test (20%)
@@ -80,7 +80,7 @@ prob = 1                    #Probability [0.0/1.0] (0 no augmentation, 1 always)
 # Paths settings (we need to mount MyDrive before)
 data_root = '/content/drive/My Drive/ACDC_challenge/train'      # 'D:\Network\ACDC_challenge\train'       '/content/drive/My Drive/ACDC_challenge/train'
 test_data_root = '/content/drive/My Drive/ACDC_challenge/test'      #'D:\Network\ACDC_challenge\test'   '/content/drive/My Drive/ACDC_challenge/test'
-preprocessing_folder = '/content/drive/My Drive/preproc_data2'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
+preprocessing_folder = '/content/drive/My Drive/preproc_data'      #'D:\Network\preproc_data'     '/content/drive/My Drive/preproc_data'
 project_root = '/content/drive/My Drive'                           #'D:\Network'      '/content/drive/My Drive'
 log_root = os.path.join(project_root, 'acdc_logdir')               
 
