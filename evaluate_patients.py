@@ -246,6 +246,22 @@ def score_data(input_folder, output_folder, model_path, config, do_postprocessin
                    #             plt.gray()
                    #             plt.show()
                             
+                        
+                            for zz in range(difference_mask.shape[2]):
+                                plt.imshow(img_arrs[:,:,zz])
+                                plt.gray()
+                                plt.axis('off')
+                                plt.show()
+                                plt.imshow(mask_arrs[:,:,zz])
+                                plt.gray()
+                                plt.axis('off')
+                                plt.show()
+                                plt.imshow(prediction_arr[:,:,zz])
+                                plt.gray()
+                                plt.axis('off')
+                                plt.show()
+                                print('...')
+
                             diff_file_name = os.path.join(output_folder,
                                                           'difference',
                                                           'patient' + patient_id + frame_suffix + '.nii.gz')
