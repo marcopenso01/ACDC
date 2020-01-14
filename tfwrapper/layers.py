@@ -443,7 +443,6 @@ def conv2D_layer_bn(bottom,
     '''
     Shortcut for batch normalised 2D convolutional layer
     '''
-
     conv = conv2D_layer(bottom=bottom,
                         name=name,
                         kernel_size=kernel_size,
@@ -460,7 +459,35 @@ def conv2D_layer_bn(bottom,
 
     return act
 
+def res_net_block(bottom,
+                  name,
+                  training,
+                  kernel_size=(3,3),
+                  num_filters=32,
+                  strides=(1,1),
+                  activation=tf.nn.relu,
+                  padding="SAME",
+                  weight_init='he_normal'):
+    
+    conv = conv2D_layer(bottom=bottom,
+                        name=name,
+                        kernel_size=kernel_size,
+                        num_filters=num_filters,
+                        strides=strides,
+                        activation=tf.identity,
+                        padding=padding,
+                        weight_init=weight_init,
+                        add_bias=False)
 
+    conv_bn = batch_normalisation_layer(conv, name + '_bn', training)
+    
+    x = tf.concat([conv_bn, bottom], axis=-1)
+    act = activation(x)
+
+    return act
+        
+    
+    
 def conv3D_layer_bn(bottom,
                     name,
                     training,
